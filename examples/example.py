@@ -63,7 +63,8 @@ def calculate_CLs(bkgonly_json, signal_patch_json):
     result = pyhf.infer.hypotest(
         1.0, workspace.data(model), model, qtilde=True, return_expected_set=True
     )
-    return result[0].tolist()[0], result[-1].ravel().tolist()
+    # return result[0].tolist()[0], result[-1].ravel().tolist()
+    return result[0].tolist()[0], result[-1].tolist()
 
 
 def main(backend=None):
@@ -78,7 +79,7 @@ def main(backend=None):
         (750, 100),  # "C1N2_Wh_hbb_750_100(750, 100)"
     )
 
-    print("Starting fit\n")
+    print("\nStarting fit\n")
     fit_start_time = datetime.now()
     CLs_obs, CLs_exp = calculate_CLs(
         oneLbb_background, oneLbb_Wh_hbb_750_100_signal_patch
@@ -86,11 +87,11 @@ def main(backend=None):
     fit_end_time = datetime.now()
     fit_time = fit_end_time - fit_start_time
 
-    print(f"\nfit C1N2_Wh_hbb_750_100 in {fit_time} seconds\n")
+    print(f"fit C1N2_Wh_hbb_750_100 in {fit_time} seconds\n")
     print(f"CLs_obs: {CLs_obs}")
     print(f"CLs_exp: {CLs_exp}")
 
 
 if __name__ == "__main__":
-    # main()
+    main()
     main("pytorch")
