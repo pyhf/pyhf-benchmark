@@ -64,8 +64,10 @@ def calculate_CLs(bkgonly_json, signal_patch_json):
     result = pyhf.infer.hypotest(
         1.0, workspace.data(model), model, qtilde=True, return_expected_set=True
     )
-    # return result[0].tolist()[0], result[-1].ravel().tolist()
-    return result[0].tolist()[0], result[-1].tolist()
+    if isinstance(pyhf.tensorlib, pyhf.tensor.pytorch_backend):
+        return result[0].tolist()[0], result[-1].tolist()
+    else:
+        return result[0].tolist()[0], result[-1].ravel().tolist()
 
 
 @click.command()
