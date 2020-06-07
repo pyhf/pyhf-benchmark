@@ -83,8 +83,10 @@ def main(backend):
     pyhf.set_backend(backend)
     print(f"Backend set to: {backend}")
 
+    # Using the generator to cleanup automatically
+    tarfile = [tgz for tgz in electroweakinos_likelihoods_download()][0]
     oneLbb_background, oneLbb_Wh_hbb_750_100_signal_patch = get_bkg_and_signal(
-        electroweakinos_likelihoods_download().__next__(),
+        tarfile,
         "1Lbb-likelihoods-hepdata",
         (750, 100),  # "C1N2_Wh_hbb_750_100(750, 100)"
     )
