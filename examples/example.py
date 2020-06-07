@@ -80,6 +80,11 @@ def calculate_CLs(bkgonly_json, signal_patch_json):
     required=False,
 )
 def main(backend):
+    """
+    Example of fitting a public workspace from HEPData. The fit selects a single
+    signal point from the signal patchset and then patches the background only
+    model to create a workspace
+    """
     pyhf.set_backend(backend)
     print(f"Backend set to: {backend}")
 
