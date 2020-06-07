@@ -4,6 +4,7 @@ import tarfile
 import os
 import json
 from datetime import datetime
+import click
 import pyhf
 
 
@@ -67,9 +68,16 @@ def calculate_CLs(bkgonly_json, signal_patch_json):
     return result[0].tolist()[0], result[-1].tolist()
 
 
-def main(backend=None):
-    if backend is None:
-        backend = "numpy"
+@click.command()
+@click.option(
+    "-b",
+    "--backend",
+    "backend",
+    help="Name of the pyhf backend to run with.",
+    default="numpy",
+    required=False,
+)
+def main(backend):
     pyhf.set_backend(backend)
     print(f"Backend set to: {backend}")
 
@@ -94,4 +102,3 @@ def main(backend=None):
 
 if __name__ == "__main__":
     main()
-    main("pytorch")
