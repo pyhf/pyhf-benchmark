@@ -5,54 +5,52 @@ import os
 import json
 from datetime import datetime
 import click
+from pathlib import Path
+import shutil
 import pyhf
 
 
-def downlaod(url, targz_filename):
+def downlaod(url):
     """Download online data"""
 
     response = requests.get(url, stream=True)
     assert response.status_code == 200
+    targz_filename = Path("tmp")
     with open(targz_filename, "wb") as file:
         file.write(response.content)
 
     # Open as a tarfile
     tar = tarfile.open(targz_filename, "r:gz")
     filenames = tar.getnames()
-    tar.extractall(path="../data/")
+    tar.extractall(path=Path("../data/"))
     tar.close()
     os.remove(targz_filename)
-    directory_name = "../data/" + filenames[0]
-    filenames = os.listdir(directory_name)
-
-    return directory_name, filenames
+    directory_name = Path("../data/" + filenames[0])
+    return directory_name
 
 
 def open_local_file(file_path):
     """Open local source files"""
+    directory_name = Path("../data/" + file_path)
+    return directory_name
 
-    return "../data/" + file_path, os.listdir(file_path)
 
-
-def get_bkg_and_signal(file_list, directory_name, model_point):
+def get_bkg_and_signal(directory_name, model_point):
     """Load background and signal"""
 
-    if "BkgOnly.json" in file_list and "patchset.json" in file_list:
-        json_file = open(directory_name + "/BkgOnly.json")
-        background_only = json.load(json_file)
-        json_file = open(directory_name + "/patchset.json")
-        patchset = pyhf.PatchSet(json.load(json_file))
+    bkgonly_path = directory_name / Path("BkgOnly.json")
+    signal_path = directory_name / Path("patchset.json")
+
+    if bkgonly_path.exists() and signal_path.exists():
+        background_only = json.load(open(bkgonly_path))
+        patchset = pyhf.PatchSet(json.load(open(signal_path)))
         signal_patch = patchset[model_point]
-    elif "BkgOnly.json" in file_list:
-        json_file = open(directory_name + "/BkgOnly.json")
-        background_only = json.load(json_file)
+    elif bkgonly_path.exists():
+        background_only = json.load(open(bkgonly_path))
         signal_patch = None
     else:
-        background_only = None
-        for file in file_list:
-            if os.path.splitext(file)[-1] == ".json":
-                json_file = open(directory_name + "/" + file)
-                background_only = json.load(json_file)
+        json_file = open(directory_name.glob('*.json')[0])
+        background_only = json.load(json_file)
         signal_patch = None
 
     return background_only, signal_patch
@@ -91,6 +89,9 @@ def calculate_CLs(bkgonly_json, signal_patch_json):
         return result[0].tolist()[0], result[-1].tolist()
     else:
         return result[0].tolist()[0], result[-1].ravel().tolist()
+
+def end(directory_name):
+    shutil.rmtree(directory_name)
 
 
 @click.command()
@@ -135,9 +136,9 @@ def main(backend, path, url, model_point):
     print(f"Backend set to: {backend}")
 
     if url:
-        directory_name, file_list = downlaod(url, "tmp")
+        directory_name = downlaod(url)
     elif path:
-        directory_name, file_list = open_local_file(path)
+        directory_name = open_local_file(path)
     else:
         print("Invalid command!")
         print("Command help ....")
@@ -150,7 +151,7 @@ def main(backend, path, url, model_point):
         raise
 
     background, signal_patch = get_bkg_and_signal(
-        file_list, directory_name, model_point,
+        directory_name, model_point,
     )
 
     print("\nStarting fit\n")
@@ -163,6 +164,7 @@ def main(backend, path, url, model_point):
     print(f"CLs_obs: {CLs_obs}")
     print(f"CLs_exp: {CLs_exp}")
 
+    end(directory_name)
 
 if __name__ == "__main__":
     main()
