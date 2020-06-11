@@ -132,6 +132,21 @@ def delete_downloaded_file(directory_name):
 def main(backend, path, url, model_point):
     """
     Automatic process of taking pyhf computation.
+
+    Usage:
+
+      $ python run.py [-b] [-p] [-u] -m
+
+    Examples:
+
+      $ python run.py -b numpy -u https://www.hepdata.net/record/resource/1267798?view=true -m [750,100]
+      $ python run.py -u https://www.hepdata.net/record/resource/1267798?view=true -m [750,100]
+      $ python run.py -b numpy -p 1Lbb-likelihoods-hepdata -m [750,100]
+
+    More information:
+
+      https://github.com/pyhf/pyhf-benchmark
+
     """
 
     pyhf.set_backend(backend)
