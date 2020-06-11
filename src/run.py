@@ -49,7 +49,8 @@ def get_bkg_and_signal(directory_name, model_point):
         background_only = json.load(open(bkgonly_path))
         signal_patch = None
     else:
-        json_file = open(directory_name.glob('*.json')[0])
+        json_filename = list(directory_name.glob('*.json'))
+        json_file = open(json_filename[0])
         background_only = json.load(json_file)
         signal_patch = None
 
@@ -164,7 +165,8 @@ def main(backend, path, url, model_point):
     print(f"CLs_obs: {CLs_obs}")
     print(f"CLs_exp: {CLs_exp}")
 
-    end(directory_name)
+    if url:
+        end(directory_name)
 
 if __name__ == "__main__":
     main()
