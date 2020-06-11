@@ -8,7 +8,9 @@ import click
 from pathlib import Path
 import shutil
 import pyhf
+import warnings
 
+warnings.filterwarnings('ignore')
 
 def downlaod(url):
     """Download online data"""
@@ -91,7 +93,7 @@ def calculate_CLs(bkgonly_json, signal_patch_json):
     else:
         return result[0].tolist()[0], result[-1].ravel().tolist()
 
-def end(directory_name):
+def delete_downloaded_file(directory_name):
     shutil.rmtree(directory_name)
 
 
@@ -117,15 +119,14 @@ def end(directory_name):
     "--url",
     "url",
     help="Online data link.",
-    default="https://www.hepdata.net/record/resource/1267798?view=true",
+    default=None,
     required=False,
 )
 @click.option(
     "-m",
-    "--model_point",
+    "--model-point",
     "model_point",
     help="Model point.",
-    default=(750, 100),
     required=True,
 )
 def main(backend, path, url, model_point):
@@ -136,6 +137,12 @@ def main(backend, path, url, model_point):
     pyhf.set_backend(backend)
     print(f"Backend set to: {backend}")
 
+    model_point_list = []
+    model_point = model_point[1:-1]
+    for item in model_point.split(','):
+        model_point_list.append(int(item))
+    model_point_tuple = tuple(model_point_list)
+
     if url:
         directory_name = downlaod(url)
     elif path:
@@ -144,15 +151,17 @@ def main(backend, path, url, model_point):
         print("Invalid command!")
         print("Command help ....")
         print(
-            "python run.py -b numpy -u https://www.hepdata.net/record/resource/1267798?view=true -m (750, 100)"
+            "python run.py -b numpy -u https://www.hepdata.net/record/resource/1267798?view=true -m [750,100]"
         )
         print(
-            "python run.py -b numpy -p ../data/1Lbb-likelihoods-hepdata -m (750, 100)"
+            "python run.py -b numpy -p 1Lbb-likelihoods-hepdata -m [750,100]"
         )
-        raise
+        return
+
+    print(f"Dataset: {directory_name.name}")
 
     background, signal_patch = get_bkg_and_signal(
-        directory_name, model_point,
+        directory_name, model_point_tuple,
     )
 
     print("\nStarting fit\n")
@@ -161,12 +170,12 @@ def main(backend, path, url, model_point):
     fit_end_time = datetime.now()
     fit_time = fit_end_time - fit_start_time
 
-    print(f"fit C1N2_Wh_hbb_750_100 in {fit_time} seconds\n")
+    print(f"fit {directory_name.name} in {fit_time} seconds\n")
     print(f"CLs_obs: {CLs_obs}")
     print(f"CLs_exp: {CLs_exp}")
 
     if url:
-        end(directory_name)
+        delete_downloaded_file(directory_name)
 
 if __name__ == "__main__":
     main()
