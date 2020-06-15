@@ -151,7 +151,7 @@ def main(backend, path, url, model_point):
 
     """
     if backend == "tensorflow":
-        tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
+        tf.get_logger().setLevel('ERROR')
 
     pyhf.set_backend(backend)
     print(f"Backend set to: {backend}")
