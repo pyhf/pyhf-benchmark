@@ -8,6 +8,7 @@ from pathlib import Path
 import shutil
 import pyhf
 import warnings
+import tensorflow as tf
 
 warnings.filterwarnings('ignore')
 
@@ -149,6 +150,8 @@ def main(backend, path, url, model_point):
       https://github.com/pyhf/pyhf-benchmark
 
     """
+    if backend == "tensorflow":
+        tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
 
     pyhf.set_backend(backend)
     print(f"Backend set to: {backend}")
