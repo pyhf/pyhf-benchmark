@@ -8,6 +8,7 @@ from pathlib import Path
 import shutil
 import pyhf
 import warnings
+import tensorflow as tf
 
 warnings.filterwarnings('ignore')
 
@@ -89,6 +90,8 @@ def calculate_CLs(bkgonly_json, signal_patch_json):
     )
     if isinstance(pyhf.tensorlib, pyhf.tensor.pytorch_backend):
         return result[0].tolist()[0], result[-1].tolist()
+    elif isinstance(pyhf.tensorlib, pyhf.tensor.tensorflow_backend):
+        return result[0].numpy().tolist()[0], result[-1].numpy().ravel().tolist()
     else:
         return result[0].tolist()[0], result[-1].ravel().tolist()
 
@@ -147,6 +150,8 @@ def main(backend, path, url, model_point):
       https://github.com/pyhf/pyhf-benchmark
 
     """
+    if backend == "tensorflow":
+        tf.get_logger().setLevel('ERROR')
 
     pyhf.set_backend(backend)
     print(f"Backend set to: {backend}")
