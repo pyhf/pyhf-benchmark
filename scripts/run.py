@@ -129,7 +129,7 @@ def delete_downloaded_file(directory_name):
     "--model-point",
     "model_point",
     help="Model point.",
-    required=True,
+    required=False,
 )
 def main(backend, path, url, model_point):
     """
@@ -150,17 +150,24 @@ def main(backend, path, url, model_point):
       https://github.com/pyhf/pyhf-benchmark
 
     """
+
+    import wandb
+    wandb.init(project="test")
+
     if backend == "tensorflow":
         tf.get_logger().setLevel('ERROR')
 
     pyhf.set_backend(backend)
     print(f"Backend set to: {backend}")
 
-    model_point_list = []
-    model_point = model_point[1:-1]
-    for item in model_point.split(','):
-        model_point_list.append(int(item))
-    model_point_tuple = tuple(model_point_list)
+    if not model_point:
+        model_point_tuple = tuple()
+    else:
+        model_point_list = []
+        model_point = model_point[1:-1]
+        for item in model_point.split(','):
+            model_point_list.append(int(item))
+        model_point_tuple = tuple(model_point_list)
 
     if url:
         directory_name = downlaod(url)
