@@ -9,6 +9,7 @@ import shutil
 import pyhf
 import warnings
 import tensorflow as tf
+import wandb
 
 warnings.filterwarnings('ignore')
 
@@ -151,8 +152,8 @@ def main(backend, path, url, model_point):
 
     """
 
-    import wandb
-    wandb.init(project="test")
+
+    wandb.init(anonymous='allow')
 
     if backend == "tensorflow":
         tf.get_logger().setLevel('ERROR')
