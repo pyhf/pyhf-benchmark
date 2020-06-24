@@ -12,6 +12,12 @@ For the time being, until a library can be created, use the `requirements.txt` t
 
 ## Usage
 
+First, users need to run `wandb` pakage locally using the following command. [Here](https://docs.wandb.com/self-hosted/local) is the configuration documentation.<br>
+
+```
+$ wandb local
+```
+
 ```
 Usage: run.py [OPTIONS]
 

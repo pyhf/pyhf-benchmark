@@ -153,7 +153,7 @@ def main(backend, path, url, model_point):
     """
 
 
-    wandb.init(anonymous='allow')
+    wandb.init()
 
     if backend == "tensorflow":
         tf.get_logger().setLevel('ERROR')
