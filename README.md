@@ -12,6 +12,12 @@ For the time being, until a library can be created, use the `requirements.txt` t
 
 ## Usage
 
+First, users need to run `wandb` pakage locally using the following command. [Here](https://docs.wandb.com/self-hosted/local) is the configuration documentation.<br>
+
+```
+$ wandb local
+```
+
 ```
 Usage: run.py [OPTIONS]
 
@@ -19,7 +25,7 @@ Usage: run.py [OPTIONS]
 
   Usage:
 
-    $ python run.py [-b] [-p] [-u] -m
+    $ python run.py [-b] [-p] [-u] [-m]
 
   Examples:
 
@@ -35,7 +41,7 @@ Options:
   -b, --backend TEXT      Name of the pyhf backend to run with.
   -p, --path TEXT         Local path of workspace.
   -u, --url TEXT          Online data link.
-  -m, --model-point TEXT  Model point.  [required]
+  -m, --model-point TEXT  Model point.
   --help                  Show this message and exit.
 ```
 
