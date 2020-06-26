@@ -11,7 +11,8 @@ import warnings
 import tensorflow as tf
 import wandb
 
-warnings.filterwarnings('ignore')
+warnings.filterwarnings("ignore")
+
 
 def downlaod(url):
     """Download online data"""
@@ -52,7 +53,7 @@ def get_bkg_and_signal(directory_name, model_point):
         background_only = json.load(open(bkgonly_path))
         signal_patch = None
     else:
-        json_filename = list(directory_name.glob('*.json'))
+        json_filename = list(directory_name.glob("*.json"))
         json_file = open(json_filename[0])
         background_only = json.load(json_file)
         signal_patch = None
@@ -96,6 +97,7 @@ def calculate_CLs(bkgonly_json, signal_patch_json):
     else:
         return result[0].tolist()[0], result[-1].ravel().tolist()
 
+
 def delete_downloaded_file(directory_name):
     shutil.rmtree(directory_name)
 
@@ -118,20 +120,9 @@ def delete_downloaded_file(directory_name):
     required=False,
 )
 @click.option(
-    "-u",
-    "--url",
-    "url",
-    help="Online data link.",
-    default=None,
-    required=False,
+    "-u", "--url", "url", help="Online data link.", default=None, required=False
 )
-@click.option(
-    "-m",
-    "--model-point",
-    "model_point",
-    help="Model point.",
-    required=False,
-)
+@click.option("-m", "--model-point", "model_point", help="Model point.", required=False)
 def main(backend, path, url, model_point):
     """
     Automatic process of taking pyhf computation.
@@ -152,11 +143,10 @@ def main(backend, path, url, model_point):
 
     """
 
-
     wandb.init()
 
     if backend == "tensorflow":
-        tf.get_logger().setLevel('ERROR')
+        tf.get_logger().setLevel("ERROR")
 
     pyhf.set_backend(backend)
     print(f"Backend set to: {backend}")
@@ -166,7 +156,7 @@ def main(backend, path, url, model_point):
     else:
         model_point_list = []
         model_point = model_point[1:-1]
-        for item in model_point.split(','):
+        for item in model_point.split(","):
             model_point_list.append(int(item))
         model_point_tuple = tuple(model_point_list)
 
@@ -180,16 +170,12 @@ def main(backend, path, url, model_point):
         print(
             "python run.py -b numpy -u https://www.hepdata.net/record/resource/1267798?view=true -m [750,100]"
         )
-        print(
-            "python run.py -b numpy -p 1Lbb-likelihoods-hepdata -m [750,100]"
-        )
+        print("python run.py -b numpy -p 1Lbb-likelihoods-hepdata -m [750,100]")
         return
 
     print(f"Dataset: {directory_name.name}")
 
-    background, signal_patch = get_bkg_and_signal(
-        directory_name, model_point_tuple,
-    )
+    background, signal_patch = get_bkg_and_signal(directory_name, model_point_tuple)
 
     print("\nStarting fit\n")
     fit_start_time = datetime.now()
@@ -203,6 +189,7 @@ def main(backend, path, url, model_point):
 
     if url:
         delete_downloaded_file(directory_name)
+
 
 if __name__ == "__main__":
     main()
