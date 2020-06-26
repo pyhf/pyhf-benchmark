@@ -8,6 +8,7 @@ import pyhf
 import warnings
 import tensorflow as tf
 import wandb
+import time
 from datetime import datetime
 from pathlib import Path
 from plot import plot
@@ -197,6 +198,7 @@ def main(backend, path, url, model_point):
     if url:
         delete_downloaded_file(directory_name)
 
+    time.sleep(3)
     plot_metrics("wandb")
 
 
