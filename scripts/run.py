@@ -126,11 +126,9 @@ def plot_metrics(directory_name):
     required=False,
 )
 @click.option(
-    "-u", "--url", "url", help="Online data link.", default=None, required=False,
+    "-u", "--url", "url", help="Online data link.", default=None, required=False
 )
-@click.option(
-    "-m", "--model-point", "model_point", help="Model point.", required=False,
-)
+@click.option("-m", "--model-point", "model_point", help="Model point.", required=False)
 def main(backend, path, url, model_point):
     """
     Automatic process of taking pyhf computation.
@@ -183,7 +181,7 @@ def main(backend, path, url, model_point):
 
     print(f"Dataset: {directory_name.name}")
 
-    background, signal_patch = get_bkg_and_signal(directory_name, model_point_tuple,)
+    background, signal_patch = get_bkg_and_signal(directory_name, model_point_tuple)
 
     print("\nStarting fit\n")
     fit_start_time = datetime.now()
