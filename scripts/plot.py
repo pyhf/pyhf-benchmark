@@ -1,6 +1,7 @@
 import json
 import pandas as pd
 import pathlib
+import time
 import matplotlib.pyplot as plt
 
 
@@ -19,6 +20,15 @@ def find_latest(directory_name):
 def load(directory_name):
     path = find_latest(directory_name)
     output_dic = {}
+
+    clock = 0
+    while not path.exists():
+        clock += 1
+        time.sleep(1)
+        print(clock)
+        if clock >= 60:
+            raise FileExistsError(f"{path} is not found!")
+
     with open(path, "r") as json_file:
         json_list = list(json_file)
     for json_str in json_list:
