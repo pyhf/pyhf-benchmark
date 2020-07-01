@@ -148,7 +148,7 @@ def main(backend, path, url, model_point):
 
     """
 
-    wandb.init()
+    wandb.init(anonymous="must")
 
     if backend == "tensorflow":
         tf.get_logger().setLevel("ERROR")
@@ -184,7 +184,8 @@ def main(backend, path, url, model_point):
 
     print("\nStarting fit\n")
     fit_start_time = datetime.now()
-    CLs_obs, CLs_exp = calculate_CLs(background, signal_patch)
+    for i in range(5):
+        CLs_obs, CLs_exp = calculate_CLs(background, signal_patch)
     fit_end_time = datetime.now()
     fit_time = fit_end_time - fit_start_time
 
