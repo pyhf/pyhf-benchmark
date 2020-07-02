@@ -2,14 +2,15 @@ import requests
 import tarfile
 import os
 import json
-from datetime import datetime
 import click
-from pathlib import Path
 import shutil
 import pyhf
 import warnings
 import tensorflow as tf
 import wandb
+from datetime import datetime
+from pathlib import Path
+from plot import plot
 
 warnings.filterwarnings("ignore")
 
@@ -102,6 +103,10 @@ def delete_downloaded_file(directory_name):
     shutil.rmtree(directory_name)
 
 
+def plot_metrics(directory_name):
+    plot(directory_name)
+
+
 @click.command()
 @click.option(
     "-b",
@@ -189,6 +194,8 @@ def main(backend, path, url, model_point):
 
     if url:
         delete_downloaded_file(directory_name)
+
+    plot_metrics("wandb")
 
 
 if __name__ == "__main__":
