@@ -33,9 +33,9 @@ class JsonlEventsFile(object):
             pass
 
     def flatten(self, dictionary):
-        if type(dictionary) == dict:
+        if isinstance(dictionary, dict):
             for k, v in list(dictionary.items()):
-                if type(v) == dict:
+                if isinstance(v, dict):
                     self.flatten(v)
                     dictionary.pop(k)
                     for k2, v2 in v.items():
