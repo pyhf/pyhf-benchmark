@@ -14,7 +14,7 @@ def find_latest(directory_name):
             list_of_dirs.append(path)
     latest_dir = max(list_of_dirs, key=lambda p: p.stat().st_ctime)
 
-    return latest_dir, latest_dir / "wandb-events.jsonl"
+    return latest_dir, latest_dir / "events.jsonl"
 
 
 def load(directory_name):
@@ -28,7 +28,7 @@ def load(directory_name):
         if clock >= 60:
             raise FileExistsError(f"{path} is not found!")
 
-    with open(path, "r") as json_file:
+    with path.open("r") as json_file:
         json_list = list(json_file)
     for json_str in json_list:
         item = json.loads(json_str)

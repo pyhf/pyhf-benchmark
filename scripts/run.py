@@ -7,10 +7,10 @@ import shutil
 import pyhf
 import warnings
 import tensorflow as tf
-import wandb
 from datetime import datetime
 from pathlib import Path
 from plot import plot
+from stats import SystemStats
 
 warnings.filterwarnings("ignore")
 
@@ -148,10 +148,11 @@ def main(backend, path, url, model_point):
 
     """
 
-    wandb.init()
-
     if backend == "tensorflow":
         tf.get_logger().setLevel("ERROR")
+
+    system = SystemStats()
+    system.start()
 
     pyhf.set_backend(backend)
     print(f"Backend set to: {backend}")
@@ -195,7 +196,8 @@ def main(backend, path, url, model_point):
     if url:
         delete_downloaded_file(directory_name)
 
-    plot_metrics("wandb")
+    system.shutdown()
+    plot_metrics("output")
 
 
 if __name__ == "__main__":
