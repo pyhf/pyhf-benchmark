@@ -9,8 +9,10 @@ import warnings
 import tensorflow as tf
 from datetime import datetime
 from pathlib import Path
+from pyhf import interpolators
 from plot import plot
 from stats import SystemStats
+from util import random_histosets_alphasets_pair
 
 warnings.filterwarnings("ignore")
 
@@ -109,6 +111,13 @@ def plot_metrics(directory_name):
 
 @click.command()
 @click.option(
+    "-t",
+    "-type",
+    "type",
+    help="Type of computation",
+    required=True,
+)
+@click.option(
     "-b",
     "--backend",
     "backend",
@@ -128,73 +137,90 @@ def plot_metrics(directory_name):
     "-u", "--url", "url", help="Online data link.", default=None, required=False
 )
 @click.option("-m", "--model-point", "model_point", help="Model point.", required=False)
-def main(backend, path, url, model_point):
+@click.option("-mm", "--mode", "mode", help="Mode.", default="fast", required=False)
+def main(type, backend, path, url, model_point, mode):
     """
     Automatic process of taking pyhf computation.
 
     Usage:
 
-      $ python run.py [-b] [-p] [-u] -m
+    $ python run.py -t [-b] [-p] [-u] [-m] [-mm]
 
-    Examples:
+  Examples:
 
-      $ python run.py -b numpy -u https://www.hepdata.net/record/resource/1267798?view=true -m [750,100]
-      $ python run.py -u https://www.hepdata.net/record/resource/1267798?view=true -m [750,100]
-      $ python run.py -b numpy -p 1Lbb-likelihoods-hepdata -m [750,100]
+    $ python run.py -t mle -b numpy -u https://www.hepdata.net/record/resource/1267798?view=true -m [750,100]
+    $ python run.py -t mle -u https://www.hepdata.net/record/resource/1267798?view=true -m [750,100]
+    $ python run.py -t mle -b numpy -p 1Lbb-likelihoods-hepdata -m [750,100]
+    $ python run.py -t interpolation -b jax -mm fast
+    $ python run.py -t interpolation -b numpy -mm slow
 
-    More information:
 
-      https://github.com/pyhf/pyhf-benchmark
+  More information:
+
+    https://github.com/pyhf/pyhf-benchmark
 
     """
-
-    if backend == "tensorflow":
-        tf.get_logger().setLevel("ERROR")
-
     system = SystemStats()
     system.start()
 
-    pyhf.set_backend(backend)
-    print(f"Backend set to: {backend}")
+    if type == "mle":
+        if backend == "tensorflow":
+            tf.get_logger().setLevel("ERROR")
 
-    if not model_point:
-        model_point_tuple = tuple()
+        pyhf.set_backend(backend)
+        print(f"Backend set to: {backend}")
+
+        if not model_point:
+            model_point_tuple = tuple()
+        else:
+            model_point_list = []
+            model_point = model_point[1:-1]
+            for item in model_point.split(","):
+                model_point_list.append(int(item))
+            model_point_tuple = tuple(model_point_list)
+
+        if url:
+            directory_name = downlaod(url)
+        elif path:
+            directory_name = open_local_file(path)
+        else:
+            print("Invalid command!")
+            print("Command help ....")
+            print(
+                "python run.py -b numpy -u https://www.hepdata.net/record/resource/1267798?view=true -m [750,100]"
+            )
+            print("python run.py -b numpy -p 1Lbb-likelihoods-hepdata -m [750,100]")
+            return
+
+        print(f"Dataset: {directory_name.name}")
+
+        background, signal_patch = get_bkg_and_signal(directory_name, model_point_tuple)
+
+        print("\nStarting fit\n")
+        fit_start_time = datetime.now()
+        CLs_obs, CLs_exp = calculate_CLs(background, signal_patch)
+        fit_end_time = datetime.now()
+        fit_time = fit_end_time - fit_start_time
+
+        print(f"fit {directory_name.name} in {fit_time} seconds\n")
+        print(f"CLs_obs: {CLs_obs}")
+        print(f"CLs_exp: {CLs_exp}")
+
+        if url:
+            delete_downloaded_file(directory_name)
+    elif type == "interpolation":
+        if mode != "slow" and mode != "fast":
+            raise ValueError(f"The mode must be either 'slow' or 'fast', not {mode}.")
+
+        h, a = random_histosets_alphasets_pair()
+        if mode == "slow":
+            slow = interpolators._slow_code0(h)
+            _ = slow(a)
+        else:
+            fast = interpolators.code0(h)
+            _ = fast(a)
     else:
-        model_point_list = []
-        model_point = model_point[1:-1]
-        for item in model_point.split(","):
-            model_point_list.append(int(item))
-        model_point_tuple = tuple(model_point_list)
-
-    if url:
-        directory_name = downlaod(url)
-    elif path:
-        directory_name = open_local_file(path)
-    else:
-        print("Invalid command!")
-        print("Command help ....")
-        print(
-            "python run.py -b numpy -u https://www.hepdata.net/record/resource/1267798?view=true -m [750,100]"
-        )
-        print("python run.py -b numpy -p 1Lbb-likelihoods-hepdata -m [750,100]")
-        return
-
-    print(f"Dataset: {directory_name.name}")
-
-    background, signal_patch = get_bkg_and_signal(directory_name, model_point_tuple)
-
-    print("\nStarting fit\n")
-    fit_start_time = datetime.now()
-    CLs_obs, CLs_exp = calculate_CLs(background, signal_patch)
-    fit_end_time = datetime.now()
-    fit_time = fit_end_time - fit_start_time
-
-    print(f"fit {directory_name.name} in {fit_time} seconds\n")
-    print(f"CLs_obs: {CLs_obs}")
-    print(f"CLs_exp: {CLs_exp}")
-
-    if url:
-        delete_downloaded_file(directory_name)
+        raise ValueError(f"The type must be either 'mle' or 'interpolation', not {type}.")
 
     system.shutdown()
     plot_metrics("output")

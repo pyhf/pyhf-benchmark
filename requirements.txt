@@ -1,2 +1,1 @@
 pyhf[backends]~=0.4
-wandb~=0.9

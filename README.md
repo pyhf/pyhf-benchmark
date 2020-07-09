@@ -14,12 +14,6 @@ For the time being, until a library can be created, use the `requirements.txt` t
 
 ## Usage
 
-First, users need to run `wandb` pakage locally using the following command. [Here](https://docs.wandb.com/self-hosted/local) is the configuration documentation.<br>
-
-```
-$ wandb local
-```
-
 ```
 Usage: run.py [OPTIONS]
 
@@ -27,23 +21,28 @@ Usage: run.py [OPTIONS]
 
   Usage:
 
-    $ python run.py [-b] [-p] [-u] [-m]
+    $ python run.py -t [-b] [-p] [-u] [-m] [-mm]
 
   Examples:
 
-    $ python run.py -b numpy -u https://www.hepdata.net/record/resource/1267798?view=true -m [750,100]
-    $ python run.py -u https://www.hepdata.net/record/resource/1267798?view=true -m [750,100]
-    $ python run.py -b numpy -p 1Lbb-likelihoods-hepdata -m [750,100]
+    $ python run.py -t mle -b numpy -u https://www.hepdata.net/record/resource/1267798?view=true -m [750,100]
+    $ python run.py -t mle -u https://www.hepdata.net/record/resource/1267798?view=true -m [750,100]
+    $ python run.py -t mle -b numpy -p 1Lbb-likelihoods-hepdata -m [750,100]
+    $ python run.py -t interpolation -b jax -mm fast
+    $ python run.py -t interpolation -b numpy -mm slow
+
 
   More information:
 
     https://github.com/pyhf/pyhf-benchmark
 
 Options:
+  -t, --type TEXT         Type of computation.
   -b, --backend TEXT      Name of the pyhf backend to run with.
   -p, --path TEXT         Local path of workspace.
   -u, --url TEXT          Online data link.
   -m, --model-point TEXT  Model point.
+  -mm, --mode TEXT        Interpolation mode.
   --help                  Show this message and exit.
 ```
 
