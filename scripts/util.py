@@ -10,6 +10,7 @@ def generate_id():
     run_gen = shortuuid.ShortUUID(alphabet=list("0123456789abcdefghijklmnopqrstuvwxyz"))
     return run_gen.random(8)
 
+
 def random_histosets_alphasets_pair():
     def generate_shapes(histogramssets, alphasets):
         h_shape = [len(histogramssets), 0, 0, 0]

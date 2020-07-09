@@ -111,11 +111,7 @@ def plot_metrics(directory_name):
 
 @click.command()
 @click.option(
-    "-c",
-    "-computation",
-    "computation",
-    help="Type of computation",
-    required=True,
+    "-c", "-computation", "computation", help="Type of computation", required=True,
 )
 @click.option(
     "-b",
@@ -220,7 +216,9 @@ def main(computation, backend, path, url, model_point, mode):
             fast = interpolators.code0(h)
             _ = fast(a)
     else:
-        raise ValueError(f"The computation type must be either 'mle' or 'interpolation', not {computation}.")
+        raise ValueError(
+            f"The computation type must be either 'mle' or 'interpolation', not {computation}."
+        )
 
     system.shutdown()
     plot_metrics("output")
