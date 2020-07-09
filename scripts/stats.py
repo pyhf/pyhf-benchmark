@@ -62,6 +62,8 @@ class SystemStats(object):
         self._start_time = time.time()
         self.sampler = {}
         self.samples = 0
+        self._sample_rate_seconds = 2
+        self._samples_to_average = 3
         self._shutdown = False
         self._dir = Path(
             f"output/run_{time.strftime('%Y%m%d', time.localtime())}_{int(self._start_time // 10000)}-{self._id}"
@@ -80,12 +82,12 @@ class SystemStats(object):
     @property
     def sample_rate_seconds(self):
         """Sample system stats every this many seconds, default to 2"""
-        return 2
+        return self._sample_rate_seconds
 
     @property
     def samples_to_average(self):
-        """The number of samples to average before pushing, default to 10"""
-        return 3
+        """The number of samples to average before pushing, default to 3"""
+        return self._samples_to_average
 
     def _thread_body(self):
         while True:
