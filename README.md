@@ -21,15 +21,15 @@ Usage: run.py [OPTIONS]
 
   Usage:
 
-    $ python run.py -t [-b] [-p] [-u] [-m] [-mm]
+    $ python run.py -c [-b] [-p] [-u] [-m] [-mm]
 
   Examples:
 
-    $ python run.py -t mle -b numpy -u https://www.hepdata.net/record/resource/1267798?view=true -m [750,100]
-    $ python run.py -t mle -u https://www.hepdata.net/record/resource/1267798?view=true -m [750,100]
-    $ python run.py -t mle -b numpy -p 1Lbb-likelihoods-hepdata -m [750,100]
-    $ python run.py -t interpolation -b jax -mm fast
-    $ python run.py -t interpolation -b numpy -mm slow
+    $ python run.py -c mle -b numpy -u https://www.hepdata.net/record/resource/1267798?view=true -m [750,100]
+    $ python run.py -c mle -u https://www.hepdata.net/record/resource/1267798?view=true -m [750,100]
+    $ python run.py -c mle -b numpy -p 1Lbb-likelihoods-hepdata -m [750,100]
+    $ python run.py -c interpolation -b jax -mm fast
+    $ python run.py -c interpolation -b numpy -mm slow
 
 
   More information:
@@ -37,7 +37,7 @@ Usage: run.py [OPTIONS]
     https://github.com/pyhf/pyhf-benchmark
 
 Options:
-  -t, --type TEXT         Type of computation.
+  -c, --computation TEXT  Type of computation.
   -b, --backend TEXT      Name of the pyhf backend to run with.
   -p, --path TEXT         Local path of workspace.
   -u, --url TEXT          Online data link.

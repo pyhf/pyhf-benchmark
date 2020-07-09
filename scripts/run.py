@@ -111,9 +111,9 @@ def plot_metrics(directory_name):
 
 @click.command()
 @click.option(
-    "-t",
-    "-type",
-    "type",
+    "-c",
+    "-computation",
+    "computation",
     help="Type of computation",
     required=True,
 )
@@ -138,21 +138,21 @@ def plot_metrics(directory_name):
 )
 @click.option("-m", "--model-point", "model_point", help="Model point.", required=False)
 @click.option("-mm", "--mode", "mode", help="Mode.", default="fast", required=False)
-def main(type, backend, path, url, model_point, mode):
+def main(computation, backend, path, url, model_point, mode):
     """
     Automatic process of taking pyhf computation.
 
     Usage:
 
-    $ python run.py -t [-b] [-p] [-u] [-m] [-mm]
+    $ python run.py -c [-b] [-p] [-u] [-m] [-mm]
 
   Examples:
 
-    $ python run.py -t mle -b numpy -u https://www.hepdata.net/record/resource/1267798?view=true -m [750,100]
-    $ python run.py -t mle -u https://www.hepdata.net/record/resource/1267798?view=true -m [750,100]
-    $ python run.py -t mle -b numpy -p 1Lbb-likelihoods-hepdata -m [750,100]
-    $ python run.py -t interpolation -b jax -mm fast
-    $ python run.py -t interpolation -b numpy -mm slow
+    $ python run.py -c mle -b numpy -u https://www.hepdata.net/record/resource/1267798?view=true -m [750,100]
+    $ python run.py -c mle -u https://www.hepdata.net/record/resource/1267798?view=true -m [750,100]
+    $ python run.py -c mle -b numpy -p 1Lbb-likelihoods-hepdata -m [750,100]
+    $ python run.py -c interpolation -b jax -mm fast
+    $ python run.py -c interpolation -b numpy -mm slow
 
 
   More information:
@@ -163,7 +163,7 @@ def main(type, backend, path, url, model_point, mode):
     system = SystemStats()
     system.start()
 
-    if type == "mle":
+    if computation == "mle":
         if backend == "tensorflow":
             tf.get_logger().setLevel("ERROR")
 
@@ -208,7 +208,7 @@ def main(type, backend, path, url, model_point, mode):
 
         if url:
             delete_downloaded_file(directory_name)
-    elif type == "interpolation":
+    elif computation == "interpolation":
         if mode != "slow" and mode != "fast":
             raise ValueError(f"The mode must be either 'slow' or 'fast', not {mode}.")
 
@@ -220,7 +220,7 @@ def main(type, backend, path, url, model_point, mode):
             fast = interpolators.code0(h)
             _ = fast(a)
     else:
-        raise ValueError(f"The type must be either 'mle' or 'interpolation', not {type}.")
+        raise ValueError(f"The computation type must be either 'mle' or 'interpolation', not {computation}.")
 
     system.shutdown()
     plot_metrics("output")
