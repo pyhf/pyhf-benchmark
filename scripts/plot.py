@@ -14,7 +14,7 @@ def find_latest(directory_name):
             list_of_dirs.append(path)
     latest_dir = max(list_of_dirs, key=lambda p: p.stat().st_ctime)
 
-    return latest_dir, latest_dir / "wandb-events.jsonl"
+    return latest_dir, latest_dir / "events.jsonl"
 
 
 def load(directory_name):
@@ -28,7 +28,7 @@ def load(directory_name):
         if clock >= 60:
             raise FileExistsError(f"{path} is not found!")
 
-    with open(path, "r") as json_file:
+    with path.open("r") as json_file:
         json_list = list(json_file)
     for json_str in json_list:
         item = json.loads(json_str)
@@ -61,87 +61,87 @@ def plot(directory_name):
     gpu_temp = output.get("system.gpu.0.temp", [0] * len(timestamp))
 
     plt.plot(timestamp, cpu_utilization)
-    plt.title("CPU Utilization (%)")
     plt.xlabel("Time(minutes)")
+    plt.ylabel("CPU Utilization (%)")
     plt.grid()
     plt.savefig(directory / "CPU_Utilization.png")
     plt.clf()
 
     plt.plot(timestamp, disk_utilization)
-    plt.title("Disk I/O Utilization (%)")
     plt.xlabel("Time(minutes)")
+    plt.ylabel("Disk I/O Utilization (%)")
     plt.grid()
     plt.savefig(directory / "Disk_IO_Utilization.png")
     plt.clf()
 
     plt.plot(timestamp, proc_cpu_threads)
-    plt.title("Process CPU Threads In Use")
     plt.xlabel("Time(minutes)")
+    plt.ylabel("Process CPU Threads In Use")
     plt.grid()
     plt.savefig(directory / "CPU_Threads.png")
     plt.clf()
 
     plt.plot(timestamp, network_sent, ls="--")
     plt.plot(timestamp, network_recv)
-    plt.title("Network Traffic (bytes)")
     plt.xlabel("Time(minutes)")
+    plt.ylabel("Network Traffic (bytes)")
     plt.grid()
     plt.savefig(directory / "Network_Traffic.png")
     plt.clf()
 
     plt.plot(timestamp, memory)
-    plt.title("System Memory Utilization (%)")
     plt.xlabel("Time(minutes)")
+    plt.ylabel("System Memory Utilization (%)")
     plt.grid()
     plt.savefig(directory / "Memory_Utilization.png")
     plt.clf()
 
     plt.plot(timestamp, proc_memory_availableMB)
-    plt.title("Process Memory Available (non-swap) (MB)")
     plt.xlabel("Time(minutes)")
+    plt.ylabel("Process Memory Available (non-swap) (MB)")
     plt.grid()
     plt.savefig(directory / "Proc_Memory_available.png")
     plt.clf()
 
     plt.plot(timestamp, proc_memory_rssMB)
-    plt.title("Process Memory In Use (non-swap) (MB)")
     plt.xlabel("Time(minutes)")
+    plt.ylabel("Process Memory In Use (non-swap) (MB)")
     plt.grid()
     plt.savefig(directory / "Proc_Memory_MB.png")
     plt.clf()
 
     plt.plot(timestamp, proc_memory_percent)
-    plt.title("Process Memory \n In Use (non-swap) (%)")
     plt.xlabel("Time(minutes)")
+    plt.ylabel("Process Memory \n In Use (non-swap) (%)")
     plt.grid()
     plt.savefig(directory / "Proc_Memory_Percent.png")
     plt.clf()
 
     if "system.gpu.0.gpu" in output:
         plt.plot(timestamp, gpu_utilization)
-        plt.title("GPU Utilization (%)")
         plt.xlabel("Time(minutes)")
+        plt.ylabel("GPU Utilization (%)")
         plt.grid()
         plt.savefig(directory / "GPU_Utilization.png")
         plt.clf()
 
         plt.plot(timestamp, gpu_memory)
-        plt.title("GPU Memory Allocated (%)")
         plt.xlabel("Time(minutes)")
+        plt.ylabel("GPU Memory Allocated (%)")
         plt.grid()
         plt.savefig(directory / "GPU_Memory_Allocated.png")
         plt.clf()
 
         plt.plot(timestamp, gpu_memory_alloc)
-        plt.title("GPU Time Spent Accessing Memory (%)")
         plt.xlabel("Time(minutes)")
+        plt.ylabel("GPU Time Spent Accessing Memory (%)")
         plt.grid()
         plt.savefig(directory / "GPU_Memory_Time.png")
         plt.clf()
 
         plt.plot(timestamp, gpu_temp)
-        plt.title("GPU Temp (℃)")
         plt.xlabel("Time(minutes)")
+        plt.ylabel("GPU Temp (℃)")
         plt.grid()
         plt.savefig(directory / "GPU_Temp.png")
         plt.clf()
