@@ -35,8 +35,8 @@ def random_histosets_alphasets_pair():
             alphas[i, : len(alphaset)] = alphaset
         return histos, alphas
 
-    nsysts = 150
-    nhistos_per_syst_upto = 300
+    nsysts = 1500
+    nhistos_per_syst_upto = 3000
     nalphas = 1
     nbins_upto = 1
 

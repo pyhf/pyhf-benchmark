@@ -9,7 +9,6 @@ import warnings
 import tensorflow as tf
 from datetime import datetime
 from pathlib import Path
-from pyhf import interpolators
 from plot import plot
 from stats import SystemStats
 from util import random_histosets_alphasets_pair
@@ -210,10 +209,10 @@ def main(computation, backend, path, url, model_point, mode):
 
         h, a = random_histosets_alphasets_pair()
         if mode == "slow":
-            slow = interpolators._slow_code0(h)
+            slow = pyhf.interpolators._slow_code0(h)
             _ = slow(a)
         else:
-            fast = interpolators.code0(h)
+            fast = pyhf.interpolators.code0(h)
             _ = fast(a)
     else:
         raise ValueError(
