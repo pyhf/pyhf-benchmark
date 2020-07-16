@@ -21,15 +21,15 @@ Usage: run.py [OPTIONS]
 
   Usage:
 
-    $ python run.py -c [-b] [-p] [-u] [-m] [-mm]
+    $ python run.py -c [-b] [-p] [-u] [-m] [-n] [-mm]
 
   Examples:
 
     $ python run.py -c mle -b numpy -u https://www.hepdata.net/record/resource/1267798?view=true -m [750,100]
     $ python run.py -c mle -u https://www.hepdata.net/record/resource/1267798?view=true -m [750,100]
     $ python run.py -c mle -b numpy -p 1Lbb-likelihoods-hepdata -m [750,100]
-    $ python run.py -c interpolation -b jax -mm fast
-    $ python run.py -c interpolation -b numpy -mm slow
+    $ python run.py -c interpolation -b jax -n 0 -mm fast
+    $ python run.py -c interpolation -b numpy -n 0 -mm slow
 
 
   More information:
@@ -42,6 +42,7 @@ Options:
   -p, --path TEXT         Local path of workspace.
   -u, --url TEXT          Online data link.
   -m, --model-point TEXT  Model point.
+  -n  --number TEXT       Interpolation type.
   -mm, --mode TEXT        Interpolation mode.
   --help                  Show this message and exit.
 ```
