@@ -9,3 +9,14 @@ exclude = '''
   | build
 )/
 '''
+
+[tool.check-manifest]
+ignore = [
+    'examples/**',
+    'tests/**',
+    'binder/**',
+    '.*',
+    'pyproject.toml',
+    'pytest.ini',
+    'CODE_OF_CONDUCT.md',
+]
