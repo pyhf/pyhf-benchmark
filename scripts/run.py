@@ -208,8 +208,10 @@ def main(computation, backend, path, url, model_point, number, mode):
         if mode not in ["slow", "fast"]:
             raise ValueError(f"The mode must be either 'slow' or 'fast', not {mode}.")
 
-        if not number.isdigit() or not 0 <= int(number) <= 4:
-            raise ValueError(f"The num must be integer in range [0, 4], not {number}.")
+        if number != "4p" and not (number.isdigit() and 0 <= int(number) <= 4):
+            raise ValueError(
+                f"The num must be integer in range [0, 4] or 4p, not {number}."
+            )
 
         h, a = random_histosets_alphasets_pair()
 
