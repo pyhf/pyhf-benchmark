@@ -215,7 +215,11 @@ def main(computation, backend, path, url, model_point, number, mode):
 
         h, a = random_histosets_alphasets_pair()
         number = int(number) if number.isdigit() else number
-        interpolator = pyhf.interpolators.get(number, False) if mode == "slow" else pyhf.interpolators.get(number)
+        interpolator = (
+            pyhf.interpolators.get(number, False)
+            if mode == "slow"
+            else pyhf.interpolators.get(number)
+        )
         interpolation = interpolator(h)
         _ = interpolation(a)
 
