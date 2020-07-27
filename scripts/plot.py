@@ -152,8 +152,8 @@ def plot_comb(directory):
     plt.xlabel("Time(minutes)")
     plt.ylabel("CPU Utilization (%)")
     plt.grid()
-    for i in range(len(outputs)):
-        timestamp = outputs[i]["_runtime"] / 60
+    for i, output in enumerate(outputs):
+        timestamp = output["_runtime"] / 60
         cpu_utilization = outputs[i].get("system.cpu", [0] * len(timestamp))
         plt.plot(timestamp, cpu_utilization, label=backends[i])
     plt.legend(loc="upper left")
@@ -163,9 +163,9 @@ def plot_comb(directory):
     plt.xlabel("Time(minutes)")
     plt.ylabel("Disk I/O Utilization (%)")
     plt.grid()
-    for i in range(len(outputs)):
-        timestamp = outputs[i]["_runtime"] / 60
-        disk_utilization = outputs[i].get("system.disk", [0] * len(timestamp))
+    for i, output in enumerate(outputs):
+        timestamp = output["_runtime"] / 60
+        disk_utilization = output.get("system.disk", [0] * len(timestamp))
         plt.plot(timestamp, disk_utilization, label=backends[i])
     plt.legend()
     plt.savefig(directory / "Disk_IO_Utilization.png")
@@ -174,11 +174,9 @@ def plot_comb(directory):
     plt.xlabel("Time(minutes)")
     plt.ylabel("Process CPU Threads In Use")
     plt.grid()
-    for i in range(len(outputs)):
-        timestamp = outputs[i]["_runtime"] / 60
-        proc_cpu_threads = outputs[i].get(
-            "system.proc.cpu.threads", [0] * len(timestamp)
-        )
+    for i, output in enumerate(outputs):
+        timestamp = outputs["_runtime"] / 60
+        proc_cpu_threads = outputs.get("system.proc.cpu.threads", [0] * len(timestamp))
         plt.plot(timestamp, proc_cpu_threads, label=backends[i])
     plt.legend()
     plt.savefig(directory / "CPU_Threads.png")
@@ -187,10 +185,10 @@ def plot_comb(directory):
     plt.xlabel("Time(minutes)")
     plt.ylabel("Network Traffic (bytes)")
     plt.grid()
-    for i in range(len(outputs)):
-        timestamp = outputs[i]["_runtime"] / 60
-        network_sent = outputs[i].get("network.sent", [0] * len(timestamp))
-        network_recv = outputs[i].get("system.network.recv", [0] * len(timestamp))
+    for i, output in enumerate(outputs):
+        timestamp = output["_runtime"] / 60
+        network_sent = output.get("network.sent", [0] * len(timestamp))
+        network_recv = output.get("system.network.recv", [0] * len(timestamp))
         plt.plot(timestamp, network_sent, ls="--", label=backends[i])
         plt.plot(timestamp, network_recv, label=backends[i])
     plt.legend()
@@ -200,9 +198,9 @@ def plot_comb(directory):
     plt.xlabel("Time(minutes)")
     plt.ylabel("System Memory Utilization (%)")
     plt.grid()
-    for i in range(len(outputs)):
-        timestamp = outputs[i]["_runtime"] / 60
-        memory = outputs[i].get("system.memory", [0] * len(timestamp))
+    for i, output in enumerate(outputs):
+        timestamp = output["_runtime"] / 60
+        memory = output.get("system.memory", [0] * len(timestamp))
         plt.plot(timestamp, memory, label=backends[i])
     plt.legend()
     plt.savefig(directory / "Memory_Utilization.png")
@@ -211,9 +209,9 @@ def plot_comb(directory):
     plt.xlabel("Time(minutes)")
     plt.ylabel("Process Memory Available (non-swap) (MB)")
     plt.grid()
-    for i in range(len(outputs)):
-        timestamp = outputs[i]["_runtime"] / 60
-        proc_memory_availableMB = outputs[i].get(
+    for i, output in enumerate(outputs):
+        timestamp = output["_runtime"] / 60
+        proc_memory_availableMB = output.get(
             "system.proc.memory.availableMB", [0] * len(timestamp)
         )
         plt.plot(timestamp, proc_memory_availableMB, label=backends[i])
@@ -224,11 +222,9 @@ def plot_comb(directory):
     plt.xlabel("Time(minutes)")
     plt.ylabel("Process Memory In Use (non-swap) (MB)")
     plt.grid()
-    for i in range(len(outputs)):
-        timestamp = outputs[i]["_runtime"] / 60
-        proc_memory_rssMB = outputs[i].get(
-            "system.proc.memory.rssMB", [0] * len(timestamp)
-        )
+    for i, output in enumerate(outputs):
+        timestamp = output["_runtime"] / 60
+        proc_memory_rssMB = output.get("system.proc.memory.rssMB", [0] * len(timestamp))
         plt.plot(timestamp, proc_memory_rssMB, label=backends[i])
     plt.legend()
     plt.savefig(directory / "Proc_Memory_MB.png")
@@ -237,8 +233,8 @@ def plot_comb(directory):
     plt.xlabel("Time(minutes)")
     plt.ylabel("Process Memory \n In Use (non-swap) (%)")
     plt.grid()
-    for i in range(len(outputs)):
-        timestamp = outputs[i]["_runtime"] / 60
+    for i, output in enumerate(outputs):
+        timestamp = output["_runtime"] / 60
         proc_memory_percent = outputs[i].get(
             "system.proc.memory.percent", [0] * len(timestamp)
         )
@@ -251,9 +247,9 @@ def plot_comb(directory):
         plt.xlabel("Time(minutes)")
         plt.ylabel("GPU Utilization (%)")
         plt.grid()
-        for i in range(len(outputs)):
-            timestamp = outputs[i]["_runtime"] / 60
-            gpu_utilization = outputs[i].get("system.gpu.0.gpu", [0] * len(timestamp))
+        for i, output in enumerate(outputs):
+            timestamp = output["_runtime"] / 60
+            gpu_utilization = output.get("system.gpu.0.gpu", [0] * len(timestamp))
             plt.plot(timestamp, gpu_utilization, label=backends[i])
         plt.legend()
         plt.savefig(directory / "GPU_Utilization.png")
@@ -262,9 +258,9 @@ def plot_comb(directory):
         plt.xlabel("Time(minutes)")
         plt.ylabel("GPU Memory Allocated (%)")
         plt.grid()
-        for i in range(len(outputs)):
-            timestamp = outputs[i]["_runtime"] / 60
-            gpu_memory = outputs[i].get("system.gpu.0.memory", [0] * len(timestamp))
+        for i, output in enumerate(outputs):
+            timestamp = output["_runtime"] / 60
+            gpu_memory = output.get("system.gpu.0.memory", [0] * len(timestamp))
             plt.plot(timestamp, gpu_memory, label=backends[i])
         plt.legend()
         plt.savefig(directory / "GPU_Memory_Allocated.png")
@@ -273,9 +269,9 @@ def plot_comb(directory):
         plt.xlabel("Time(minutes)")
         plt.ylabel("GPU Time Spent Accessing Memory (%)")
         plt.grid()
-        for i in range(len(outputs)):
-            timestamp = outputs[i]["_runtime"] / 60
-            gpu_memory_alloc = outputs[i].get(
+        for i, output in enumerate(outputs):
+            timestamp = output["_runtime"] / 60
+            gpu_memory_alloc = output.get(
                 "system.gpu.0.memoryAllocated", [0] * len(timestamp)
             )
             plt.plot(timestamp, gpu_memory_alloc, label=backends[i])
@@ -286,9 +282,9 @@ def plot_comb(directory):
         plt.xlabel("Time(minutes)")
         plt.ylabel("GPU Temp (℃)")
         plt.grid()
-        for i in range(len(outputs)):
-            timestamp = outputs[i]["_runtime"] / 60
-            gpu_temp = outputs[i].get("system.gpu.0.temp", [0] * len(timestamp))
+        for i, output in enumerate(outputs):
+            timestamp = output["_runtime"] / 60
+            gpu_temp = output.get("system.gpu.0.temp", [0] * len(timestamp))
             plt.plot(timestamp, gpu_temp, label=backends[i])
         plt.legend()
         plt.savefig(directory / "GPU_Temp.png")
