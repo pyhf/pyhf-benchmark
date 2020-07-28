@@ -1,5 +1,4 @@
-
-#pieChart {    
+#pieChart {
 	position:relative;
 	top:40%;
 	left:10px;
@@ -7,15 +6,12 @@
     height: 400px; 
     display: inline-block;
 }
-
-
 #barChart {
 	position:relative;
 	top:40%;
     height: 400px;
     display: inline-block;
 }
-
 .slice {
    font-size: 12pt;
    font-family: Verdana;

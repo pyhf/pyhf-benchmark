@@ -8,6 +8,7 @@ function d3lineChart(data) {
     if (data.length >= 1) {
         arr = Object.keys(data[0]);
     }
+    var color = ['#e41a1c','#377eb8','#4daf4a','#984ea3','#ff7f00','#ffff33','#a65628','#f781bf','#999999', '#e41623', '#3d6eb8'];
 
     for (let i = 0; i < arr.length; ++i) {
         if(arr[i] === "_runtime" || arr[i] === "_timestamp") {
@@ -58,7 +59,7 @@ function d3lineChart(data) {
         svg.append("path")
           .datum(data)
           .attr("fill", "none")
-          .attr("stroke", "#69b3a2")
+          .attr("stroke", color[i])
           .attr("stroke-width", 1.5)
           .attr("d", d3.line()
             .x(function(d) { return x(d._runtime) })
@@ -74,7 +75,7 @@ function d3lineChart(data) {
             .attr("cx", function(d) { return x(d._runtime) } )
             .attr("cy", function(d) { return y(Reflect.get(d, arr[i])) } )
             .attr("r", 5)
-            .attr("fill", "#69b3a2");
+            .attr("fill", color[i]);
     }
 
 }

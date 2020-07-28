@@ -41,7 +41,7 @@ def load(directory_name):
 
 @app.route("/get_linechart_data")
 def get_linechart_data():
-    output, directory = load("../output")
+    output, directory = load("./output/run_20200727_159587_7ft4i98n")
     return jsonify(output)
 
 
