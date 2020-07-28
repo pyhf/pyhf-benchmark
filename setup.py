@@ -11,6 +11,7 @@ extras_require = {
         "pre-commit",
         "black",
         "twine",
+        "tensorflow~=2.2.0",
     ],
 }
 extras_require["complete"] = sorted(set(sum(extras_require.values(), [])))
