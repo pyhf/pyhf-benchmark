@@ -9,9 +9,9 @@ import warnings
 import tensorflow as tf
 from datetime import datetime
 from pathlib import Path
-from plot import plot
-from stats import SystemStats
-from util import random_histosets_alphasets_pair
+from .plot import plot
+from .stats import SystemStats
+from .util import random_histosets_alphasets_pair
 
 warnings.filterwarnings("ignore")
 
@@ -134,7 +134,7 @@ def plot_metrics(directory_name):
 @click.option("-m", "--model-point", "model_point", help="Model point.", required=False)
 @click.option("-n", "--number", "number", help="Number.", default="0", required=False)
 @click.option("-mm", "--mode", "mode", help="Mode.", default="fast", required=False)
-def main(computation, backend, path, url, model_point, number, mode):
+def run(computation, backend, path, url, model_point, number, mode):
     """
     Automatic process of taking pyhf computation.
 
@@ -233,4 +233,4 @@ def main(computation, backend, path, url, model_point, number, mode):
 
 
 if __name__ == "__main__":
-    main()
+    run()

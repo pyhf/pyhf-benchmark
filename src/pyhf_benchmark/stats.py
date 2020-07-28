@@ -3,8 +3,8 @@ import time
 import os
 import threading
 import psutil
-import util
-import jsonlfile
+from . import util
+from . import jsonlfile
 from numbers import Number
 from pathlib import Path
 
