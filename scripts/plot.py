@@ -4,6 +4,49 @@ import pathlib
 import time
 import matplotlib.pyplot as plt
 
+ylabels = [
+    "CPU Utilization (%)",
+    "Disk I/O Utilization (%)",
+    "Process CPU Threads In Use",
+    "Network Traffic (bytes)",
+    "System Memory Utilization (%)",
+    "Process Memory Available (non-swap) (MB)",
+    "Process Memory In Use (non-swap) (MB)",
+    "Process Memory \n In Use (non-swap) (%)",
+    "GPU Utilization (%)",
+    "GPU Memory Allocated (%)",
+    "GPU Time Spent Accessing Memory (%)",
+    "GPU Temp (℃)",
+]
+columns = [
+    "system.cpu",
+    "system.disk",
+    "system.proc.cpu.threads",
+    ["network.sent", "system.network.recv"],
+    "system.memory",
+    "system.proc.memory.availableMB",
+    "system.proc.memory.rssMB",
+    "system.proc.memory.percent",
+    "system.gpu.0.gpu",
+    "system.gpu.0.memory",
+    "system.gpu.0.memoryAllocated",
+    "system.gpu.0.temp",
+]
+filenames = [
+    "CPU_Utilization.png",
+    "Disk_IO_Utilization.png",
+    "CPU_Threads.png",
+    "Network_Traffic.png",
+    "Memory_Utilization.png",
+    "Proc_Memory_available.png",
+    "Proc_Memory_MB.png",
+    "Proc_Memory_Percent.png",
+    "GPU_Utilization.png",
+    "GPU_Memory_Allocated.png",
+    "GPU_Memory_Time.png",
+    "GPU_Temp.png",
+]
+
 
 def load(directory_name):
     path = directory_name / "events.jsonl"
@@ -37,255 +80,61 @@ def load_all(directory_name):
     return contents, backends
 
 
+def subplot(y_label, column, output, directory, filename):
+
+    x_value = output["_runtime"]
+    if y_label == "Network Traffic (bytes)":
+        y_value1 = output.get(column[0], [0] * len(x_value))
+        y_value2 = output.get(column[1], [0] * len(x_value))
+        plt.plot(x_value, y_value1, ls="--", label="send")
+        plt.plot(x_value, y_value2, label="recv")
+        plt.legend(loc="upper left")
+    else:
+        y_value = output.get(column, [0] * len(x_value))
+        plt.plot(x_value, y_value)
+    plt.xlabel("Time (minutes)")
+    plt.ylabel(y_label)
+    plt.grid()
+    plt.savefig(directory / filename)
+    plt.clf()
+
+
+def subplot_comb(y_label, column, outputs, backends, directory, filename):
+    plt.xlabel("Time (minutes)")
+    plt.ylabel(y_label)
+    plt.grid()
+    for i, output in enumerate(outputs):
+        x_value = output["_runtime"]
+        if y_label == "Network Traffic (bytes)":
+            y_value1 = output.get(column[0], [0] * len(x_value))
+            y_value2 = output.get(column[1], [0] * len(x_value))
+            plt.plot(x_value, y_value1, ls="--", label=backends[i] + "_send")
+            plt.plot(x_value, y_value2, label=backends[i] + "_recv")
+        else:
+            y_value = outputs[i].get(column, [0] * len(x_value))
+            plt.plot(x_value, y_value, label=backends[i])
+    plt.legend(loc="upper left")
+    plt.savefig(directory / filename)
+    plt.clf()
+
+
 def plot(directory):
     output = load(directory)
-    timestamp = output["_runtime"] / 60
-
-    cpu_utilization = output.get("system.cpu", [0] * len(timestamp))
-    disk_utilization = output.get("system.disk", [0] * len(timestamp))
-    proc_cpu_threads = output.get("system.proc.cpu.threads", [0] * len(timestamp))
-    network_sent = output.get("network.sent", [0] * len(timestamp))
-    network_recv = output.get("system.network.recv", [0] * len(timestamp))
-
-    memory = output.get("system.memory", [0] * len(timestamp))
-    proc_memory_availableMB = output.get(
-        "system.proc.memory.availableMB", [0] * len(timestamp)
-    )
-    proc_memory_rssMB = output.get("system.proc.memory.rssMB", [0] * len(timestamp))
-    proc_memory_percent = output.get("system.proc.memory.percent", [0] * len(timestamp))
-
-    gpu_utilization = output.get("system.gpu.0.gpu", [0] * len(timestamp))
-    gpu_memory = output.get("system.gpu.0.memory", [0] * len(timestamp))
-    gpu_memory_alloc = output.get("system.gpu.0.memoryAllocated", [0] * len(timestamp))
-    gpu_temp = output.get("system.gpu.0.temp", [0] * len(timestamp))
-
-    plt.plot(timestamp, cpu_utilization)
-    plt.xlabel("Time(minutes)")
-    plt.ylabel("CPU Utilization (%)")
-    plt.grid()
-    plt.savefig(directory / "CPU_Utilization.png")
-    plt.clf()
-
-    plt.plot(timestamp, disk_utilization)
-    plt.xlabel("Time(minutes)")
-    plt.ylabel("Disk I/O Utilization (%)")
-    plt.grid()
-    plt.savefig(directory / "Disk_IO_Utilization.png")
-    plt.clf()
-
-    plt.plot(timestamp, proc_cpu_threads)
-    plt.xlabel("Time(minutes)")
-    plt.ylabel("Process CPU Threads In Use")
-    plt.grid()
-    plt.savefig(directory / "CPU_Threads.png")
-    plt.clf()
-
-    plt.plot(timestamp, network_sent, ls="--")
-    plt.plot(timestamp, network_recv)
-    plt.xlabel("Time(minutes)")
-    plt.ylabel("Network Traffic (bytes)")
-    plt.grid()
-    plt.savefig(directory / "Network_Traffic.png")
-    plt.clf()
-
-    plt.plot(timestamp, memory)
-    plt.xlabel("Time(minutes)")
-    plt.ylabel("System Memory Utilization (%)")
-    plt.grid()
-    plt.savefig(directory / "Memory_Utilization.png")
-    plt.clf()
-
-    plt.plot(timestamp, proc_memory_availableMB)
-    plt.xlabel("Time(minutes)")
-    plt.ylabel("Process Memory Available (non-swap) (MB)")
-    plt.grid()
-    plt.savefig(directory / "Proc_Memory_available.png")
-    plt.clf()
-
-    plt.plot(timestamp, proc_memory_rssMB)
-    plt.xlabel("Time(minutes)")
-    plt.ylabel("Process Memory In Use (non-swap) (MB)")
-    plt.grid()
-    plt.savefig(directory / "Proc_Memory_MB.png")
-    plt.clf()
-
-    plt.plot(timestamp, proc_memory_percent)
-    plt.xlabel("Time(minutes)")
-    plt.ylabel("Process Memory \n In Use (non-swap) (%)")
-    plt.grid()
-    plt.savefig(directory / "Proc_Memory_Percent.png")
-    plt.clf()
-
-    if "system.gpu.0.gpu" in output:
-        plt.plot(timestamp, gpu_utilization)
-        plt.xlabel("Time(minutes)")
-        plt.ylabel("GPU Utilization (%)")
-        plt.grid()
-        plt.savefig(directory / "GPU_Utilization.png")
-        plt.clf()
-
-        plt.plot(timestamp, gpu_memory)
-        plt.xlabel("Time(minutes)")
-        plt.ylabel("GPU Memory Allocated (%)")
-        plt.grid()
-        plt.savefig(directory / "GPU_Memory_Allocated.png")
-        plt.clf()
-
-        plt.plot(timestamp, gpu_memory_alloc)
-        plt.xlabel("Time(minutes)")
-        plt.ylabel("GPU Time Spent Accessing Memory (%)")
-        plt.grid()
-        plt.savefig(directory / "GPU_Memory_Time.png")
-        plt.clf()
-
-        plt.plot(timestamp, gpu_temp)
-        plt.xlabel("Time(minutes)")
-        plt.ylabel("GPU Temp (℃)")
-        plt.grid()
-        plt.savefig(directory / "GPU_Temp.png")
-        plt.clf()
+    idx = 0
+    while idx < len(ylabels):
+        subplot(ylabels[idx], columns[idx], output, directory, filenames[idx])
+        if not "system.gpu.0.gpu" in output and idx >= 7:
+            break
+        idx += 1
 
 
 def plot_comb(directory):
     outputs, backends = load_all(directory)
-
-    plt.xlabel("Time(minutes)")
-    plt.ylabel("CPU Utilization (%)")
-    plt.grid()
-    for i, output in enumerate(outputs):
-        timestamp = output["_runtime"] / 60
-        cpu_utilization = outputs[i].get("system.cpu", [0] * len(timestamp))
-        plt.plot(timestamp, cpu_utilization, label=backends[i])
-    plt.legend(loc="upper left")
-    plt.savefig(directory / "CPU_Utilization.png")
-    plt.clf()
-
-    plt.xlabel("Time(minutes)")
-    plt.ylabel("Disk I/O Utilization (%)")
-    plt.grid()
-    for i, output in enumerate(outputs):
-        timestamp = output["_runtime"] / 60
-        disk_utilization = output.get("system.disk", [0] * len(timestamp))
-        plt.plot(timestamp, disk_utilization, label=backends[i])
-    plt.legend()
-    plt.savefig(directory / "Disk_IO_Utilization.png")
-    plt.clf()
-
-    plt.xlabel("Time(minutes)")
-    plt.ylabel("Process CPU Threads In Use")
-    plt.grid()
-    for i, output in enumerate(outputs):
-        timestamp = outputs["_runtime"] / 60
-        proc_cpu_threads = outputs.get("system.proc.cpu.threads", [0] * len(timestamp))
-        plt.plot(timestamp, proc_cpu_threads, label=backends[i])
-    plt.legend()
-    plt.savefig(directory / "CPU_Threads.png")
-    plt.clf()
-
-    plt.xlabel("Time(minutes)")
-    plt.ylabel("Network Traffic (bytes)")
-    plt.grid()
-    for i, output in enumerate(outputs):
-        timestamp = output["_runtime"] / 60
-        network_sent = output.get("network.sent", [0] * len(timestamp))
-        network_recv = output.get("system.network.recv", [0] * len(timestamp))
-        plt.plot(timestamp, network_sent, ls="--", label=backends[i])
-        plt.plot(timestamp, network_recv, label=backends[i])
-    plt.legend()
-    plt.savefig(directory / "Network_Traffic.png")
-    plt.clf()
-
-    plt.xlabel("Time(minutes)")
-    plt.ylabel("System Memory Utilization (%)")
-    plt.grid()
-    for i, output in enumerate(outputs):
-        timestamp = output["_runtime"] / 60
-        memory = output.get("system.memory", [0] * len(timestamp))
-        plt.plot(timestamp, memory, label=backends[i])
-    plt.legend()
-    plt.savefig(directory / "Memory_Utilization.png")
-    plt.clf()
-
-    plt.xlabel("Time(minutes)")
-    plt.ylabel("Process Memory Available (non-swap) (MB)")
-    plt.grid()
-    for i, output in enumerate(outputs):
-        timestamp = output["_runtime"] / 60
-        proc_memory_availableMB = output.get(
-            "system.proc.memory.availableMB", [0] * len(timestamp)
+    idx = 0
+    while idx < len(ylabels):
+        subplot_comb(
+            ylabels[idx], columns[idx], outputs, backends, directory, filenames[idx]
         )
-        plt.plot(timestamp, proc_memory_availableMB, label=backends[i])
-    plt.legend()
-    plt.savefig(directory / "Proc_Memory_available.png")
-    plt.clf()
-
-    plt.xlabel("Time(minutes)")
-    plt.ylabel("Process Memory In Use (non-swap) (MB)")
-    plt.grid()
-    for i, output in enumerate(outputs):
-        timestamp = output["_runtime"] / 60
-        proc_memory_rssMB = output.get("system.proc.memory.rssMB", [0] * len(timestamp))
-        plt.plot(timestamp, proc_memory_rssMB, label=backends[i])
-    plt.legend()
-    plt.savefig(directory / "Proc_Memory_MB.png")
-    plt.clf()
-
-    plt.xlabel("Time(minutes)")
-    plt.ylabel("Process Memory \n In Use (non-swap) (%)")
-    plt.grid()
-    for i, output in enumerate(outputs):
-        timestamp = output["_runtime"] / 60
-        proc_memory_percent = outputs[i].get(
-            "system.proc.memory.percent", [0] * len(timestamp)
-        )
-        plt.plot(timestamp, proc_memory_percent, label=backends[i])
-    plt.legend()
-    plt.savefig(directory / "Proc_Memory_Percent.png")
-    plt.clf()
-
-    if "system.gpu.0.gpu" in outputs[0]:
-        plt.xlabel("Time(minutes)")
-        plt.ylabel("GPU Utilization (%)")
-        plt.grid()
-        for i, output in enumerate(outputs):
-            timestamp = output["_runtime"] / 60
-            gpu_utilization = output.get("system.gpu.0.gpu", [0] * len(timestamp))
-            plt.plot(timestamp, gpu_utilization, label=backends[i])
-        plt.legend()
-        plt.savefig(directory / "GPU_Utilization.png")
-        plt.clf()
-
-        plt.xlabel("Time(minutes)")
-        plt.ylabel("GPU Memory Allocated (%)")
-        plt.grid()
-        for i, output in enumerate(outputs):
-            timestamp = output["_runtime"] / 60
-            gpu_memory = output.get("system.gpu.0.memory", [0] * len(timestamp))
-            plt.plot(timestamp, gpu_memory, label=backends[i])
-        plt.legend()
-        plt.savefig(directory / "GPU_Memory_Allocated.png")
-        plt.clf()
-
-        plt.xlabel("Time(minutes)")
-        plt.ylabel("GPU Time Spent Accessing Memory (%)")
-        plt.grid()
-        for i, output in enumerate(outputs):
-            timestamp = output["_runtime"] / 60
-            gpu_memory_alloc = output.get(
-                "system.gpu.0.memoryAllocated", [0] * len(timestamp)
-            )
-            plt.plot(timestamp, gpu_memory_alloc, label=backends[i])
-        plt.legend()
-        plt.savefig(directory / "GPU_Memory_Time.png")
-        plt.clf()
-
-        plt.xlabel("Time(minutes)")
-        plt.ylabel("GPU Temp (℃)")
-        plt.grid()
-        for i, output in enumerate(outputs):
-            timestamp = output["_runtime"] / 60
-            gpu_temp = output.get("system.gpu.0.temp", [0] * len(timestamp))
-            plt.plot(timestamp, gpu_temp, label=backends[i])
-        plt.legend()
-        plt.savefig(directory / "GPU_Temp.png")
-        plt.clf()
+        if not "system.gpu.0.gpu" in outputs[0] and idx >= 7:
+            break
+        idx += 1
