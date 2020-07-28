@@ -18,6 +18,6 @@ extras_require["complete"] = sorted(set(sum(extras_require.values(), [])))
 setuptools.setup(
     extras_require=extras_require,
     entry_points={
-        "console_scripts": ["pyhf_benchmark=pyhf_benchmark.commandline:pyhf_benchmark"]
+        "console_scripts": ["pyhf-benchmark=pyhf_benchmark.commandline:pyhf_benchmark"]
     },
 )
