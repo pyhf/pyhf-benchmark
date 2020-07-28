@@ -12,6 +12,7 @@ extras_require = {
         "black",
         "twine",
         "tensorflow~=2.2.0",
+        "pandas~=0.2",
     ],
 }
 extras_require["complete"] = sorted(set(sum(extras_require.values(), [])))
