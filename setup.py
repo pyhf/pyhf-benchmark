@@ -1,17 +1,10 @@
 import setuptools
 
-extras_require = {
-    "tensorflow": ["pyhf[tensorflow]"],
-    "torch": ["pyhf[torch]"],
-    "jax": ["pyhf[jax]"],
-    "minuit": ["pyhf[minuit]"],
-    "backends": ["pyhf[backends]"],
-}
+extras_require = {}
 extras_require["lint"] = sorted(set(["pyflakes", "black"]))
 extras_require["test"] = sorted(
     set(
-        extras_require["backends"]
-        + [
+        [
             "check-manifest",
             "pytest~=5.2",
             "pytest-cov~=2.8",
