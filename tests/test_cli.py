@@ -12,8 +12,8 @@ def test_version(script_runner):
     assert ret.success
     assert pyhf_benchmark.__version__ in ret.stdout
     assert ret.stderr == ""
-    # make sure it took less than a second
-    assert elapsed < 1.0
+    # make sure it took less than 1.1 seconds
+    assert elapsed < 1.1
 
 
 def test_run(script_runner):
