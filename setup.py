@@ -12,7 +12,6 @@ extras_require = {
         "black",
         "twine",
         "pyhf[backends]~=0.5",
-        "pandas~=0.2",
     ],
 }
 extras_require["complete"] = sorted(set(sum(extras_require.values(), [])))
