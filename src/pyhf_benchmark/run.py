@@ -6,7 +6,6 @@ import click
 import shutil
 import pyhf
 import warnings
-import tensorflow as tf
 from datetime import datetime
 from pathlib import Path
 from .plot import plot
@@ -160,9 +159,6 @@ def run(computation, backend, path, url, model_point, number, mode):
     system.start()
 
     if computation == "mle":
-        if backend == "tensorflow":
-            tf.get_logger().setLevel("ERROR")
-
         pyhf.set_backend(backend)
         print(f"Backend set to: {backend}")
 

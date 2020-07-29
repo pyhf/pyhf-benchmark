@@ -11,7 +11,7 @@ extras_require = {
         "pre-commit",
         "black",
         "twine",
-        "tensorflow~=2.2.0",
+        "pyhf[backends]~=0.5",
         "pandas~=0.2",
     ],
 }
