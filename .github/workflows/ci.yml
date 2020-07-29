@@ -28,6 +28,7 @@ jobs:
         python -m pip install --upgrade pip setuptools wheel
         python -m pip install -q --no-cache-dir --use-feature=2020-resolver -e .[complete]
         python -m pip install --upgrade --no-cache-dir --use-feature=2020-resolver pyhf[backends]
+        python -m pip check
         python -m pip list
     - name: Check MANIFEST
       if: matrix.pyython-version == 3.8 && matrix.os == 'ubuntu-latest'
