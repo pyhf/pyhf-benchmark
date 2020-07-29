@@ -8,9 +8,20 @@ extras_require = {
     "backends": ["pyhf[backends]"],
 }
 extras_require["lint"] = sorted(set(["pyflakes", "black"]))
-extras_require["develop"] = sorted(
+extras_require["test"] = sorted(
     set(
         extras_require["backends"]
+        + [
+            "check-manifest",
+            "pytest~=5.2",
+            "pytest-cov~=2.8",
+            "pytest-console-scripts~=0.2",
+        ]
+    )
+)
+extras_require["develop"] = sorted(
+    set(
+        extras_require["test"]
         + extras_require["lint"]
         + [
             "check-manifest",
