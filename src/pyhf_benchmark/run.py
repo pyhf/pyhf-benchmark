@@ -230,7 +230,3 @@ def run(computation, backend, path, url, model_point, number, mode):
 
     system.shutdown()
     plot_metrics("output")
-
-
-if __name__ == "__main__":
-    run()
