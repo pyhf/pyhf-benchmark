@@ -5,6 +5,8 @@ import json
 import click
 import shutil
 import pyhf
+import functools
+import operator
 import warnings
 from datetime import datetime
 from pathlib import Path
@@ -91,12 +93,10 @@ def calculate_CLs(bkgonly_json, signal_patch_json):
     result = pyhf.infer.hypotest(
         1.0, workspace.data(model), model, qtilde=True, return_expected_set=True
     )
-    if isinstance(pyhf.tensorlib, pyhf.tensor.pytorch_backend):
-        return result[0].tolist()[0], result[-1].tolist()
-    elif isinstance(pyhf.tensorlib, pyhf.tensor.tensorflow_backend):
-        return result[0].numpy().tolist()[0], result[-1].numpy().ravel().tolist()
-    else:
-        return result[0].tolist()[0], result[-1].ravel().tolist()
+    return (
+        pyhf.tensorlib.tolist(result[0]),
+        functools.reduce(operator.iconcat, pyhf.tensorlib.tolist(result[-1]), []),
+    )
 
 
 def delete_downloaded_file(directory_name):
