@@ -1,8 +1,8 @@
 import logging
 import click
 
-from .version import __version__
-from . import run
+from ..version import __version__
+from .. import run
 
 logging.basicConfig()
 log = logging.getLogger(__name__)
