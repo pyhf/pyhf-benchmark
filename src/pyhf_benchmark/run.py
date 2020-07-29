@@ -139,15 +139,15 @@ def run(computation, backend, path, url, model_point, number, mode):
 
     Usage:
 
-    $ python run.py -c [-b] [-p] [-u] [-m] [-n] [-mm]
+    $ pyhf-benchmark run -c [-b] [-p] [-u] [-m] [-n] [-mm]
 
   Examples:
 
-    $ python run.py -c mle -b numpy -u https://www.hepdata.net/record/resource/1267798?view=true -m [750,100]
-    $ python run.py -c mle -u https://www.hepdata.net/record/resource/1267798?view=true -m [750,100]
-    $ python run.py -c mle -b numpy -p 1Lbb-likelihoods-hepdata -m [750,100]
-    $ python run.py -c interpolation -b jax -n 0 -mm fast
-    $ python run.py -c interpolation -b numpy -n 0 -mm slow
+    $ pyhf-benchmark run -c mle -b numpy -u https://www.hepdata.net/record/resource/1267798?view=true -m [750,100]
+    $ pyhf-benchmark run -c mle -u https://www.hepdata.net/record/resource/1267798?view=true -m [750,100]
+    $ pyhf-benchmark run -c mle -b numpy -p 1Lbb-likelihoods-hepdata -m [750,100]
+    $ pyhf-benchmark run -c interpolation -b jax -n 0 -mm fast
+    $ pyhf-benchmark run -c interpolation -b numpy -n 0 -mm slow
 
 
   More information:
@@ -179,9 +179,11 @@ def run(computation, backend, path, url, model_point, number, mode):
             print("Invalid command!")
             print("Command help ....")
             print(
-                "python run.py -b numpy -u https://www.hepdata.net/record/resource/1267798?view=true -m [750,100]"
+                "pyhf-benchmark run -b numpy -u https://www.hepdata.net/record/resource/1267798?view=true -m [750,100]"
             )
-            print("python run.py -b numpy -p 1Lbb-likelihoods-hepdata -m [750,100]")
+            print(
+                "pyhf-benchmark run -b numpy -p 1Lbb-likelihoods-hepdata -m [750,100]"
+            )
             return
 
         print(f"Dataset: {directory_name.name}")
