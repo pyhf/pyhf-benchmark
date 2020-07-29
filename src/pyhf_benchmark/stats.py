@@ -3,7 +3,6 @@ import time
 import os
 import threading
 import psutil
-from . import util
 from . import jsonlfile
 from numbers import Number
 from pathlib import Path
@@ -58,7 +57,6 @@ class SystemStats(object):
 
         self._thread = threading.Thread(target=self._thread_body, daemon=True)
         self._pid = os.getpid()
-        self._id = util.generate_id()
         self._start_time = time.time()
         self.sampler = {}
         self.samples = 0
@@ -66,7 +64,7 @@ class SystemStats(object):
         self._samples_to_average = 3
         self._shutdown = False
         self._dir = Path(
-            f"output/run_{time.strftime('%Y%m%d', time.localtime())}_{int(self._start_time // 10000)}-{self._id}"
+            f"output/run_{time.strftime('%Y%m%d', time.localtime())}_{int(self._start_time)}"
         )
         self.events = jsonlfile.JsonlEventsFile(
             self._start_time, EVENTS_FNAME, self._dir
