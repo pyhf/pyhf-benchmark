@@ -5,6 +5,9 @@ import time
 
 def test_version(script_runner):
     command = "pyhf-benchmark --version"
+    # Run once so that matplotlib builds the font cache
+    # Otherwise takes too long
+    script_runner.run(*shlex.split(command))
     start = time.time()
     ret = script_runner.run(*shlex.split(command))
     end = time.time()
@@ -12,8 +15,8 @@ def test_version(script_runner):
     assert ret.success
     assert pyhf_benchmark.__version__ in ret.stdout
     assert ret.stderr == ""
-    # make sure it took less than 1.1 seconds
-    assert elapsed < 1.1
+    # make sure it took less than 1 second
+    assert elapsed < 1.0
 
 
 def test_run(script_runner):
