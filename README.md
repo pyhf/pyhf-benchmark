@@ -1,5 +1,8 @@
 # pyhf-benchmark
 
+[![GitHub Project](https://img.shields.io/badge/GitHub--blue?style=social&logo=GitHub)](https://github.com/pyhf/pyhf-benchmark)
+[![GitHub Actions Status: CI](https://github.com/pyhf/pyhf-benchmark/workflows/CI/badge.svg?branch=master)](https://github.com/pyhf/pyhf-benchmark/actions?query=workflow%3ACI+branch%3Amaster)
+[![Code Coverage](https://codecov.io/gh/pyhf/pyhf-benchmark/graph/badge.svg?branch=master)](https://codecov.io/gh/pyhf/pyhf-benchmark?branch=master)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
 Benchmarking of hardware acceleration of `pyhf`
