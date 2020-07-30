@@ -5,8 +5,6 @@ import json
 import click
 import shutil
 import pyhf
-import functools
-import operator
 import warnings
 from datetime import datetime
 from pathlib import Path
@@ -93,10 +91,19 @@ def calculate_CLs(bkgonly_json, signal_patch_json):
     result = pyhf.infer.hypotest(
         1.0, workspace.data(model), model, qtilde=True, return_expected_set=True
     )
-    return (
-        pyhf.tensorlib.tolist(result[0]),
-        functools.reduce(operator.iconcat, pyhf.tensorlib.tolist(result[-1]), []),
-    )
+    if pyhf.tensorlib.name == "pytorch":
+        CLs_obs, CLs_exp = (
+            pyhf.tensorlib.tolist(result[0])[0],
+            pyhf.tensorlib.tolist(result[-1]),
+        )
+    elif pyhf.tensorlib.name == "tensorflow":
+        CLs_obs, CLs_exp = result[0].numpy()[0], result[-1].numpy().ravel()
+    else:
+        CLs_obs, CLs_exp = (
+            pyhf.tensorlib.tolist(result[0])[0],
+            pyhf.tensorlib.tolist(result[-1].ravel()),
+        )
+    return CLs_obs, CLs_exp
 
 
 def delete_downloaded_file(directory_name):
@@ -176,14 +183,7 @@ def run(computation, backend, path, url, model_point, number, mode):
         elif path:
             directory_name = open_local_file(path)
         else:
-            print("Invalid command!")
-            print("Command help ....")
-            print(
-                "pyhf-benchmark run -b numpy -u https://www.hepdata.net/record/resource/1267798?view=true -m [750,100]"
-            )
-            print(
-                "pyhf-benchmark run -b numpy -p 1Lbb-likelihoods-hepdata -m [750,100]"
-            )
+            print("Invalid command!\n See pyhf-benchmark --help")
             return
 
         print(f"Dataset: {directory_name.name}")
