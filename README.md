@@ -1,5 +1,8 @@
 # pyhf-benchmark
 
+[![GitHub Project](https://img.shields.io/badge/GitHub--blue?style=social&logo=GitHub)](https://github.com/pyhf/pyhf-benchmark)
+[![GitHub Actions Status: CI](https://github.com/pyhf/pyhf-benchmark/workflows/CI/badge.svg?branch=master)](https://github.com/pyhf/pyhf-benchmark/actions?query=workflow%3ACI+branch%3Amaster)
+[![Code Coverage](https://codecov.io/gh/pyhf/pyhf-benchmark/graph/badge.svg?branch=master)](https://codecov.io/gh/pyhf/pyhf-benchmark?branch=master)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
 Benchmarking of hardware acceleration of `pyhf`
@@ -21,15 +24,15 @@ Usage: run.py [OPTIONS]
 
   Usage:
 
-    $ python run.py -c [-b] [-p] [-u] [-m] [-n] [-mm]
+    $ pyhf-benchmark run -c [-b] [-p] [-u] [-m] [-n] [-mm]
 
   Examples:
 
-    $ python run.py -c mle -b numpy -u https://www.hepdata.net/record/resource/1267798?view=true -m [750,100]
-    $ python run.py -c mle -u https://www.hepdata.net/record/resource/1267798?view=true -m [750,100]
-    $ python run.py -c mle -b numpy -p 1Lbb-likelihoods-hepdata -m [750,100]
-    $ python run.py -c interpolation -b jax -n 0 -mm fast
-    $ python run.py -c interpolation -b numpy -n 0 -mm slow
+    $ pyhf-benchmark run -c mle -b numpy -u https://www.hepdata.net/record/resource/1267798?view=true -m [750,100]
+    $ pyhf-benchmark run -c mle -u https://www.hepdata.net/record/resource/1267798?view=true -m [750,100]
+    $ pyhf-benchmark run -c mle -b numpy -p 1Lbb-likelihoods-hepdata -m [750,100]
+    $ pyhf-benchmark run -c interpolation -b jax -n 0 -mm fast
+    $ pyhf-benchmark run -c interpolation -b numpy -n 0 -mm slow
 
 
   More information:
