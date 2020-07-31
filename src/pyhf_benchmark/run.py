@@ -8,8 +8,7 @@ import pyhf
 import warnings
 from datetime import datetime
 from pathlib import Path
-from .plot import plot
-from .stats import SystemStats
+from .manager import RunManager
 from .util import random_histosets_alphasets_pair
 
 warnings.filterwarnings("ignore")
@@ -110,10 +109,6 @@ def delete_downloaded_file(directory_name):
     shutil.rmtree(directory_name)
 
 
-def plot_metrics(directory_name):
-    plot(directory_name)
-
-
 @click.command()
 @click.option(
     "-c", "-computation", "computation", help="Type of computation", required=True,
@@ -162,21 +157,16 @@ def run(computation, backend, path, url, model_point, number, mode):
     https://github.com/pyhf/pyhf-benchmark
 
     """
-    system = SystemStats()
-    system.start()
+
+    if backend.find("[") != -1:
+        backends = backend[1:-1].split(",")
+    else:
+        backends = [backend]
+    metas = {}
+    metas["backend"] = backends
+    metas["computation"] = computation
 
     if computation == "mle":
-        pyhf.set_backend(backend)
-        print(f"Backend set to: {backend}")
-
-        if not model_point:
-            model_point_tuple = tuple()
-        else:
-            model_point_list = []
-            model_point = model_point[1:-1]
-            for item in model_point.split(","):
-                model_point_list.append(int(item))
-            model_point_tuple = tuple(model_point_list)
 
         if url:
             directory_name = downlaod(url)
@@ -188,18 +178,43 @@ def run(computation, backend, path, url, model_point, number, mode):
 
         print(f"Dataset: {directory_name.name}")
 
-        background, signal_patch = get_bkg_and_signal(directory_name, model_point_tuple)
+        if not model_point:
+            model_point_tuple = tuple()
+        else:
+            model_point_list = []
+            model_point = model_point[1:-1]
+            for item in model_point.split(","):
+                model_point_list.append(int(item))
+            model_point_tuple = tuple(model_point_list)
 
-        print("\nStarting fit\n")
-        fit_start_time = datetime.now()
-        CLs_obs, CLs_exp = calculate_CLs(background, signal_patch)
-        fit_end_time = datetime.now()
-        fit_time = fit_end_time - fit_start_time
+        metas["data"] = directory_name.name
+        run_manager = RunManager(metas)
 
-        print(f"fit {directory_name.name} in {fit_time} seconds\n")
-        print(f"CLs_obs: {CLs_obs}")
-        print(f"CLs_exp: {CLs_exp}")
+        for bk in backends:
+            meta = metas
+            meta["backend"] = bk
+            run_manager.start(meta)
 
+            pyhf.set_backend(bk)
+            print(f"Backend set to: {bk}")
+
+            background, signal_patch = get_bkg_and_signal(
+                directory_name, model_point_tuple
+            )
+
+            print("\nStarting fit\n")
+
+            fit_start_time = datetime.now()
+            CLs_obs, CLs_exp = calculate_CLs(background, signal_patch)
+            fit_end_time = datetime.now()
+            fit_time = fit_end_time - fit_start_time
+
+            print(f"fit {directory_name.name} in {fit_time} seconds\n")
+            print(f"CLs_obs: {CLs_obs}")
+            print(f"CLs_exp: {CLs_exp}")
+            run_manager.close()
+
+        run_manager.shutdown()
         if url:
             delete_downloaded_file(directory_name)
     elif computation == "interpolation":
@@ -212,19 +227,31 @@ def run(computation, backend, path, url, model_point, number, mode):
             )
 
         h, a = random_histosets_alphasets_pair()
-        number = int(number) if number.isdigit() else number
-        interpolator = (
-            pyhf.interpolators.get(number, False)
-            if mode == "slow"
-            else pyhf.interpolators.get(number)
-        )
-        interpolation = interpolator(h)
-        _ = interpolation(a)
+        metas["data"] = "Random"
+        run_manager = RunManager(metas)
 
+        for bk in backends:
+            meta = metas
+            meta["backend"] = bk
+            run_manager.start(meta)
+
+            number = int(number) if number.isdigit() else number
+            pyhf.set_backend(bk)
+            interpolator = (
+                pyhf.interpolators.get(number, False)
+                if mode == "slow"
+                else pyhf.interpolators.get(number)
+            )
+            interpolation = interpolator(h)
+            _ = interpolation(a)
+            run_manager.close()
+
+        run_manager.shutdown()
     else:
         raise ValueError(
             f"The computation type must be either 'mle' or 'interpolation', not {computation}."
         )
 
-    system.shutdown()
-    plot_metrics("output")
+
+if __name__ == "__main__":
+    run()

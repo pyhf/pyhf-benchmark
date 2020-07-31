@@ -40,7 +40,7 @@ def gpu_in_use_by_this_process(gpu_handle):
 
 
 class SystemStats(object):
-    def __init__(self):
+    def __init__(self, meta=None, directory="."):
         try:
             pynvml.nvmlInit()
             self.gpu_count = pynvml.nvmlDeviceGetCount()
@@ -63,8 +63,12 @@ class SystemStats(object):
         self._sample_rate_seconds = 2
         self._samples_to_average = 3
         self._shutdown = False
-        self._dir = Path(
-            f"output/run_{time.strftime('%Y%m%d', time.localtime())}_{int(self._start_time)}"
+        self._dir = (
+            Path(f"{directory}/{meta['data']}_{meta['computation']}_{meta['backend']}")
+            if meta
+            else Path(
+                f"{directory}/{time.strftime('%Y%m%d', time.localtime())}_{int(self._start_time)}"
+            )
         )
         self.events = jsonlfile.JsonlEventsFile(
             self._start_time, EVENTS_FNAME, self._dir
@@ -76,6 +80,10 @@ class SystemStats(object):
     @property
     def proc(self):
         return psutil.Process(pid=self._pid)
+
+    @property
+    def dir(self):
+        return self._dir
 
     @property
     def sample_rate_seconds(self):
