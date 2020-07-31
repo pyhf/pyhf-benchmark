@@ -1,5 +1,4 @@
 import time
-import util
 from pathlib import Path
 from .plot import plot, plot_comb
 from .stats import SystemStats
