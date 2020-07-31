@@ -6,7 +6,6 @@ import click
 import shutil
 import pyhf
 import warnings
-import tensorflow as tf
 from datetime import datetime
 from pathlib import Path
 from .manager import RunManager
@@ -195,9 +194,6 @@ def run(computation, backend, path, url, model_point, number, mode):
             meta = metas
             meta["backend"] = bk
             run_manager.start(meta)
-
-            if bk == "tensorflow":
-                tf.get_logger().setLevel("ERROR")
 
             pyhf.set_backend(bk)
             print(f"Backend set to: {bk}")
