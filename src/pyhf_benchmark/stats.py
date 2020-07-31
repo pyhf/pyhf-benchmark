@@ -3,7 +3,7 @@ import time
 import os
 import threading
 import psutil
-import jsonlfile
+from . import jsonlfile
 from numbers import Number
 from pathlib import Path
 
@@ -67,7 +67,7 @@ class SystemStats(object):
             Path(f"{directory}/{meta['data']}_{meta['computation']}_{meta['backend']}")
             if meta
             else Path(
-                f"{directory}/{time.strftime('%Y%m%d', time.localtime())}_{int(self._start_time // 10000)}"
+                f"{directory}/{time.strftime('%Y%m%d', time.localtime())}_{int(self._start_time)}"
             )
         )
         self.events = jsonlfile.JsonlEventsFile(

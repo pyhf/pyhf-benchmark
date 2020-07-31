@@ -1,8 +1,8 @@
 import time
 import util
 from pathlib import Path
-from plot import plot, plot_comb
-from stats import SystemStats
+from .plot import plot, plot_comb
+from .stats import SystemStats
 
 
 class RunManager(object):
@@ -10,10 +10,9 @@ class RunManager(object):
         self._stat = []
         self._meta = meta
         self._start_time = time.time()
-        self._id = util.generate_id()
         self.times = 0
         self.directory = Path(
-            f"output/run_{time.strftime('%Y%m%d', time.localtime())}_{int(self._start_time // 10000)}_{self._id}"
+            f"output/run_{time.strftime('%Y%m%d', time.localtime())}_{int(self._start_time)}"
         )
 
     def start(self, meta=None):

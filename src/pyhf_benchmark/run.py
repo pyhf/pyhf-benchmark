@@ -9,8 +9,8 @@ import warnings
 import tensorflow as tf
 from datetime import datetime
 from pathlib import Path
-from manager import RunManager
-from util import random_histosets_alphasets_pair
+from .manager import RunManager
+from .util import random_histosets_alphasets_pair
 
 warnings.filterwarnings("ignore")
 
@@ -91,12 +91,19 @@ def calculate_CLs(bkgonly_json, signal_patch_json):
     result = pyhf.infer.hypotest(
         1.0, workspace.data(model), model, qtilde=True, return_expected_set=True
     )
-    if isinstance(pyhf.tensorlib, pyhf.tensor.pytorch_backend):
-        return result[0].tolist()[0], result[-1].tolist()
-    elif isinstance(pyhf.tensorlib, pyhf.tensor.tensorflow_backend):
-        return result[0].numpy().tolist()[0], result[-1].numpy().ravel().tolist()
+    if pyhf.tensorlib.name == "pytorch":
+        CLs_obs, CLs_exp = (
+            pyhf.tensorlib.tolist(result[0])[0],
+            pyhf.tensorlib.tolist(result[-1]),
+        )
+    elif pyhf.tensorlib.name == "tensorflow":
+        CLs_obs, CLs_exp = result[0].numpy()[0], result[-1].numpy().ravel()
     else:
-        return result[0].tolist()[0], result[-1].ravel().tolist()
+        CLs_obs, CLs_exp = (
+            pyhf.tensorlib.tolist(result[0])[0],
+            pyhf.tensorlib.tolist(result[-1].ravel()),
+        )
+    return CLs_obs, CLs_exp
 
 
 def delete_downloaded_file(directory_name):
@@ -129,21 +136,21 @@ def delete_downloaded_file(directory_name):
 @click.option("-m", "--model-point", "model_point", help="Model point.", required=False)
 @click.option("-n", "--number", "number", help="Number.", default="0", required=False)
 @click.option("-mm", "--mode", "mode", help="Mode.", default="fast", required=False)
-def main(computation, backend, path, url, model_point, number, mode):
+def run(computation, backend, path, url, model_point, number, mode):
     """
     Automatic process of taking pyhf computation.
 
     Usage:
 
-    $ python run.py -c [-b] [-p] [-u] [-m] [-n] [-mm]
+    $ pyhf-benchmark run -c [-b] [-p] [-u] [-m] [-n] [-mm]
 
   Examples:
 
-    $ python run.py -c mle -b numpy -u https://www.hepdata.net/record/resource/1267798?view=true -m [750,100]
-    $ python run.py -c mle -u https://www.hepdata.net/record/resource/1267798?view=true -m [750,100]
-    $ python run.py -c mle -b numpy -p 1Lbb-likelihoods-hepdata -m [750,100]
-    $ python run.py -c interpolation -b jax -n 0 -mm fast
-    $ python run.py -c interpolation -b numpy -n 0 -mm slow
+    $ pyhf-benchmark run -c mle -b numpy -u https://www.hepdata.net/record/resource/1267798?view=true -m [750,100]
+    $ pyhf-benchmark run -c mle -u https://www.hepdata.net/record/resource/1267798?view=true -m [750,100]
+    $ pyhf-benchmark run -c mle -b numpy -p 1Lbb-likelihoods-hepdata -m [750,100]
+    $ pyhf-benchmark run -c interpolation -b jax -n 0 -mm fast
+    $ pyhf-benchmark run -c interpolation -b numpy -n 0 -mm slow
 
 
   More information:
@@ -167,12 +174,7 @@ def main(computation, backend, path, url, model_point, number, mode):
         elif path:
             directory_name = open_local_file(path)
         else:
-            print("Invalid command!")
-            print("Command help ....")
-            print(
-                "python run.py -b numpy -u https://www.hepdata.net/record/resource/1267798?view=true -m [750,100]"
-            )
-            print("python run.py -b numpy -p 1Lbb-likelihoods-hepdata -m [750,100]")
+            print("Invalid command!\n See pyhf-benchmark --help")
             return
 
         print(f"Dataset: {directory_name.name}")
@@ -256,4 +258,4 @@ def main(computation, backend, path, url, model_point, number, mode):
 
 
 if __name__ == "__main__":
-    main()
+    run()
