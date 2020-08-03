@@ -1,8 +1,8 @@
 import click
 import pyhf
 import warnings
-import pyhf_benchmark.load as load
-import pyhf_benchmark.mle as mle
+from .load import downlaod, open_local_file, delete_downloaded_file
+from .mle import get_bkg_and_signal, calculate_CLs
 from datetime import datetime
 from .manager import RunManager
 from .util import random_histosets_alphasets_pair
@@ -70,9 +70,9 @@ def run(computation, backend, path, url, model_point, number, mode):
     if computation == "mle":
 
         if url:
-            directory_name = load.downlaod(url)
+            directory_name = downlaod(url)
         elif path:
-            directory_name = load.open_local_file(path)
+            directory_name = open_local_file(path)
         else:
             print("Invalid command!\n See pyhf-benchmark --help")
             return
@@ -99,14 +99,14 @@ def run(computation, backend, path, url, model_point, number, mode):
             pyhf.set_backend(bk)
             print(f"Backend set to: {bk}")
 
-            background, signal_patch = mle.get_bkg_and_signal(
+            background, signal_patch = get_bkg_and_signal(
                 directory_name, model_point_tuple
             )
 
             print("\nStarting fit\n")
 
             fit_start_time = datetime.now()
-            CLs_obs, CLs_exp = mle.calculate_CLs(background, signal_patch)
+            CLs_obs, CLs_exp = calculate_CLs(background, signal_patch)
             fit_end_time = datetime.now()
             fit_time = fit_end_time - fit_start_time
 
@@ -117,7 +117,7 @@ def run(computation, backend, path, url, model_point, number, mode):
 
         run_manager.shutdown()
         if url:
-            load.delete_downloaded_file(directory_name)
+            delete_downloaded_file(directory_name)
     elif computation == "interpolation":
         if mode not in ["slow", "fast"]:
             raise ValueError(f"The mode must be either 'slow' or 'fast', not {mode}.")
