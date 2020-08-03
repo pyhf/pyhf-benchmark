@@ -11,7 +11,7 @@ class RunManager(object):
         self._start_time = time.time()
         self.times = 0
         self.directory = Path(
-            f"output/run_{time.strftime('%Y%m%d', time.localtime())}_{int(self._start_time)}"
+            f"{Path(__file__).resolve().parent}/../../output/run_{time.strftime('%Y%m%d', time.localtime())}_{int(self._start_time)}"
         )
 
     def start(self, meta=None):
@@ -22,8 +22,8 @@ class RunManager(object):
 
     def close(self):
         system = self._stat.pop(0)
-        plot(system.dir)
         system.shutdown()
+        plot(system.dir)
 
     def shutdown(self):
         if self.times > 1:

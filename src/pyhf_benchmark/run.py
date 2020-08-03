@@ -1,112 +1,13 @@
-import requests
-import tarfile
-import os
-import json
 import click
-import shutil
 import pyhf
 import warnings
+import pyhf_benchmark.load as load
+import pyhf_benchmark.mle as mle
 from datetime import datetime
-from pathlib import Path
 from .manager import RunManager
 from .util import random_histosets_alphasets_pair
 
 warnings.filterwarnings("ignore")
-
-
-def downlaod(url):
-    """Download online data"""
-
-    response = requests.get(url, stream=True)
-    assert response.status_code == 200
-    targz_filename = Path("tmp")
-    with open(targz_filename, "wb") as file:
-        file.write(response.content)
-
-    # Open as a tarfile
-    tar = tarfile.open(targz_filename, "r:gz")
-    filenames = tar.getnames()
-    tar.extractall(path=Path("../data/"))
-    tar.close()
-    os.remove(targz_filename)
-    directory_name = Path("../data/" + filenames[0])
-    return directory_name
-
-
-def open_local_file(file_path):
-    """Open local source files"""
-    directory_name = Path("../data/" + file_path)
-    return directory_name
-
-
-def get_bkg_and_signal(directory_name, model_point):
-    """Load background and signal"""
-
-    bkgonly_path = directory_name / Path("BkgOnly.json")
-    signal_path = directory_name / Path("patchset.json")
-
-    if bkgonly_path.exists() and signal_path.exists():
-        background_only = json.load(open(bkgonly_path))
-        patchset = pyhf.PatchSet(json.load(open(signal_path)))
-        signal_patch = patchset[model_point]
-    elif bkgonly_path.exists():
-        background_only = json.load(open(bkgonly_path))
-        signal_patch = None
-    else:
-        json_filename = list(directory_name.glob("*.json"))
-        json_file = open(json_filename[0])
-        background_only = json.load(json_file)
-        signal_patch = None
-
-    return background_only, signal_patch
-
-
-def calculate_CLs(bkgonly_json, signal_patch_json):
-    """
-    Calculate the observed CLs and the expected CLs band from a background only
-    and signal patch.
-
-    Args:
-        bkgonly_json: The JSON for the background only model
-        signal_patch_json: The JSON Patch for the signal model
-
-    Returns:
-        CLs_obs: The observed CLs value
-        CLs_exp: List of the expected CLs value band
-    """
-    workspace = pyhf.workspace.Workspace(bkgonly_json)
-    if signal_patch_json:
-        model = workspace.model(
-            measurement_name=None,
-            patches=[signal_patch_json],
-            modifier_settings={
-                "normsys": {"interpcode": "code4"},
-                "histosys": {"interpcode": "code4p"},
-            },
-        )
-    else:
-        model = workspace.model()
-
-    result = pyhf.infer.hypotest(
-        1.0, workspace.data(model), model, qtilde=True, return_expected_set=True
-    )
-    if pyhf.tensorlib.name == "pytorch":
-        CLs_obs, CLs_exp = (
-            pyhf.tensorlib.tolist(result[0])[0],
-            pyhf.tensorlib.tolist(result[-1]),
-        )
-    elif pyhf.tensorlib.name == "tensorflow":
-        CLs_obs, CLs_exp = result[0].numpy()[0], result[-1].numpy().ravel()
-    else:
-        CLs_obs, CLs_exp = (
-            pyhf.tensorlib.tolist(result[0])[0],
-            pyhf.tensorlib.tolist(result[-1].ravel()),
-        )
-    return CLs_obs, CLs_exp
-
-
-def delete_downloaded_file(directory_name):
-    shutil.rmtree(directory_name)
 
 
 @click.command()
@@ -169,9 +70,9 @@ def run(computation, backend, path, url, model_point, number, mode):
     if computation == "mle":
 
         if url:
-            directory_name = downlaod(url)
+            directory_name = load.downlaod(url)
         elif path:
-            directory_name = open_local_file(path)
+            directory_name = load.open_local_file(path)
         else:
             print("Invalid command!\n See pyhf-benchmark --help")
             return
@@ -198,14 +99,14 @@ def run(computation, backend, path, url, model_point, number, mode):
             pyhf.set_backend(bk)
             print(f"Backend set to: {bk}")
 
-            background, signal_patch = get_bkg_and_signal(
+            background, signal_patch = mle.get_bkg_and_signal(
                 directory_name, model_point_tuple
             )
 
             print("\nStarting fit\n")
 
             fit_start_time = datetime.now()
-            CLs_obs, CLs_exp = calculate_CLs(background, signal_patch)
+            CLs_obs, CLs_exp = mle.calculate_CLs(background, signal_patch)
             fit_end_time = datetime.now()
             fit_time = fit_end_time - fit_start_time
 
@@ -216,7 +117,7 @@ def run(computation, backend, path, url, model_point, number, mode):
 
         run_manager.shutdown()
         if url:
-            delete_downloaded_file(directory_name)
+            load.delete_downloaded_file(directory_name)
     elif computation == "interpolation":
         if mode not in ["slow", "fast"]:
             raise ValueError(f"The mode must be either 'slow' or 'fast', not {mode}.")
