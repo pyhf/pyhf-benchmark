@@ -135,7 +135,6 @@ def run(computation, backend, path, url, model_point, number, mode):
             meta = metas
             meta["backend"] = bk
             run_manager.start(meta)
-
             number = int(number) if number.isdigit() else number
             pyhf.set_backend(bk)
             interpolator = (
