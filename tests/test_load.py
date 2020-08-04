@@ -1,5 +1,5 @@
 import pytest
-from pyhf_benchmark.load import *
+from pyhf_benchmark.load import downlaod, open_local_file, delete_downloaded_file
 
 
 @pytest.mark.parametrize(
