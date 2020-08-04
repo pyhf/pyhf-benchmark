@@ -152,7 +152,3 @@ def run(computation, backend, path, url, model_point, number, mode):
         raise ValueError(
             f"The computation type must be either 'mle' or 'interpolation', not {computation}."
         )
-
-
-if __name__ == "__main__":
-    run()

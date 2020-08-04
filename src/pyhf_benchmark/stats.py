@@ -103,10 +103,12 @@ class SystemStats(object):
                     self.sampler[stat] = self.sampler.get(stat, [])
                     self.sampler[stat].append(value)
             self.samples += 1
-            if self._shutdown or self.samples >= self.samples_to_average:
+            # Discard the system information in the last time interval
+            # because the last time interval might be too short
+            if self._shutdown:
+                break
+            if self.samples >= self.samples_to_average:
                 self.flush()
-                if self._shutdown:
-                    break
             seconds = 0
             while seconds < self.sample_rate_seconds:
                 time.sleep(0.1)

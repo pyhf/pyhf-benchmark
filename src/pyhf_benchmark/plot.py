@@ -81,41 +81,40 @@ def load_all(directory_name):
 
 
 def subplot(y_label, column, output, directory, filename):
-
+    fig, ax = plt.subplots()
     x_value = output["_runtime"]
     if y_label == "Network Traffic (bytes)":
         y_value1 = output.get(column[0], [0] * len(x_value))
         y_value2 = output.get(column[1], [0] * len(x_value))
-        plt.plot(x_value, y_value1, ls="--", label="send")
-        plt.plot(x_value, y_value2, label="recv")
-        plt.legend(loc="upper left")
+        ax.plot(x_value, y_value1, ls="--", label="send")
+        ax.plot(x_value, y_value2, label="recv")
+        ax.legend(loc="upper left")
     else:
         y_value = output.get(column, [0] * len(x_value))
-        plt.plot(x_value, y_value)
-    plt.xlabel("Time (minutes)")
-    plt.ylabel(y_label)
-    plt.grid()
-    plt.savefig(directory / filename)
-    plt.clf()
+        ax.plot(x_value, y_value)
+    ax.set_xlabel("Time (minutes)")
+    ax.set_ylabel(y_label)
+    ax.grid()
+    fig.savefig(directory / filename)
 
 
 def subplot_comb(y_label, column, outputs, backends, directory, filename):
-    plt.xlabel("Time (minutes)")
-    plt.ylabel(y_label)
-    plt.grid()
+    fig, ax = plt.subplots()
+    ax.set_xlabel("Time (minutes)")
+    ax.set_ylabel(y_label)
+    ax.grid()
     for i, output in enumerate(outputs):
         x_value = output["_runtime"]
         if y_label == "Network Traffic (bytes)":
             y_value1 = output.get(column[0], [0] * len(x_value))
             y_value2 = output.get(column[1], [0] * len(x_value))
-            plt.plot(x_value, y_value1, ls="--", label=backends[i] + "_send")
-            plt.plot(x_value, y_value2, label=backends[i] + "_recv")
+            ax.plot(x_value, y_value1, ls="--", label=backends[i] + "_send")
+            ax.plot(x_value, y_value2, label=backends[i] + "_recv")
         else:
             y_value = outputs[i].get(column, [0] * len(x_value))
-            plt.plot(x_value, y_value, label=backends[i])
-    plt.legend(loc="upper left")
-    plt.savefig(directory / filename)
-    plt.clf()
+            ax.plot(x_value, y_value, label=backends[i])
+    ax.legend(loc="upper left")
+    fig.savefig(directory / filename)
 
 
 def plot(directory):
