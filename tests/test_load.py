@@ -1,5 +1,5 @@
 import pytest
-from pyhf_benchmark.load import downlaod, open_local_file, delete_downloaded_file
+import pyhf_benchmark.load as load
 
 
 @pytest.mark.parametrize(
@@ -12,9 +12,9 @@ from pyhf_benchmark.load import downlaod, open_local_file, delete_downloaded_fil
     ],
 )
 def test_load(url, path):
-    download_dir_name = downlaod(url)
+    download_dir_name = load.download(url)
     assert "1Lbb-likelihoods-hepdata" == download_dir_name.name
-    local_dir_name = open_local_file(path)
+    local_dir_name = load.open_local_file(path)
     assert "1Lbb-likelihoods-hepdata" == local_dir_name.name
-    delete_downloaded_file(download_dir_name)
+    load.delete_downloaded_file(download_dir_name)
     assert not download_dir_name.is_dir()

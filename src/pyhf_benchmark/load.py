@@ -5,7 +5,7 @@ import shutil
 from pathlib import Path
 
 
-def downlaod(url):
+def download(url):
     """Download online data"""
 
     response = requests.get(url, stream=True)
