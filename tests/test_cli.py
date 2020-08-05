@@ -27,6 +27,13 @@ def test_mle(script_runner):
     assert "CLs_exp" in ret.stdout
     assert ret.stderr == ""
 
+    command = "pyhf-benchmark run -c mle -b [numpy,jax] -u https://www.hepdata.net/record/resource/1267798?view=true -m [750,100]"
+    ret = script_runner.run(*shlex.split(command))
+    assert ret.success
+    assert "CLs_obs" in ret.stdout
+    assert "CLs_exp" in ret.stdout
+    assert ret.stderr == ""
+
 
 def test_interpolation(script_runner):
     command = "pyhf-benchmark run -c interpolation -b numpy -n 0 -mm slow"
