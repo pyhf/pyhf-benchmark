@@ -70,7 +70,7 @@ def load(directory_name):
 
 
 def load_all(directory_name):
-    list_of_paths = pathlib.Path(directory_name).glob("*")
+    list_of_paths = directory_name.glob("*")
     contents = []
     backends = []
     for path in list_of_paths:

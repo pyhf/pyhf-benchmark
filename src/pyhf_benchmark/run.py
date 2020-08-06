@@ -135,12 +135,12 @@ def run(computation, backend, path, url, model_point, number, mode):
             meta = metas
             meta["backend"] = bk
             run_manager.start(meta)
-            version = int(number) if number.isdigit() else number
+            interpolation_type = int(number) if number.isdigit() else number
             pyhf.set_backend(bk)
             interpolator = (
-                pyhf.interpolators.get(version, False)
+                pyhf.interpolators.get(interpolation_type, False)
                 if mode == "slow"
-                else pyhf.interpolators.get(version)
+                else pyhf.interpolators.get(interpolation_type)
             )
             interpolation = interpolator(h)
             _ = interpolation(a)
