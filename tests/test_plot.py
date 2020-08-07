@@ -9,7 +9,7 @@ def test_plot(mocker):
     mocker.patch("pyhf_benchmark.plot.subplot")
     plt.plot(directory)
     plt.load.assert_called_once_with(directory)
-    plt.subplot.called
+    assert plt.subplot.called
 
 
 def test_plot_comb(mocker):
@@ -22,4 +22,4 @@ def test_plot_comb(mocker):
     plt.subplot_comb(
         plt.ylabels[0], plt.columns[0], pd.DataFrame(), [], directory, plt.filenames[0]
     )
-    plt.subplot_comb.called
+    assert plt.subplot_comb.called
