@@ -6,7 +6,7 @@ extras_require["test"] = sorted(
     set(
         [
             "check-manifest",
-            "pytest~=5.2",
+            "pytest~=6.0",
             "pytest-cov~=2.8",
             "pytest-console-scripts~=0.2",
         ]
