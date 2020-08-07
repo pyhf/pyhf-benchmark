@@ -1,6 +1,9 @@
 import pytest
+import shutil
 from pathlib import Path
 from pyhf_benchmark.stats import SystemStats
+
+directory = Path("directory")
 
 
 @pytest.fixture
@@ -9,11 +12,12 @@ def stats():
     metas["backend"] = "numpy"
     metas["computation"] = "mle"
     metas["data"] = "Random"
-    directory = Path("directory")
+
     return SystemStats(metas, directory)
 
 
 def test_defaults(stats):
+    stats.start()
     stats.shutdown()
     print(stats.stats().keys())
     assert set(stats.stats().keys()).issuperset(
@@ -30,3 +34,4 @@ def test_defaults(stats):
     )
     assert stats.sample_rate_seconds == 2
     assert stats.samples_to_average == 3
+    shutil.rmtree(directory)
