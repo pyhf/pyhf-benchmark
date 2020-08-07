@@ -9,6 +9,7 @@ extras_require["test"] = sorted(
             "pytest~=6.0",
             "pytest-cov~=2.8",
             "pytest-console-scripts~=0.2",
+            "pytest-mock~=3.0",
         ]
     )
 )
