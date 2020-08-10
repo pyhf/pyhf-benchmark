@@ -8,6 +8,7 @@ def test_jsonfile():
     directory = Path("directory")
     filename = Path("filename")
     file = JsonlEventsFile(time.time(), filename, directory)
+    file.load()
     file.flatten({})
     file.track("system", {})
     file.close()

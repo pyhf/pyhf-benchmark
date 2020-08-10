@@ -18,6 +18,10 @@ def get_bkg_and_signal(directory_name, model_point):
         signal_patch = None
     else:
         json_filename = list(directory_name.glob("*.json"))
+        if not json_filename:
+            raise ValueError(
+                "The {directory_name} directory does not contain background and signal information."
+            )
         json_file = open(json_filename[0])
         background_only = json.load(json_file)
         signal_patch = None
