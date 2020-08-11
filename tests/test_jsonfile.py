@@ -1,6 +1,5 @@
 import time
 import shutil
-import pytest
 from pathlib import Path
 from pyhf_benchmark.jsonlfile import JsonlEventsFile
 
