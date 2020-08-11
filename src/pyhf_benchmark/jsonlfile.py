@@ -20,7 +20,7 @@ class JsonlEventsFile(object):
     def load(self):
         try:
             last_row = {}
-            with self.fname.open("a+") as f:
+            with self.fname.open("r+") as f:
                 for line in f:
                     try:
                         last_row = json.loads(line)
