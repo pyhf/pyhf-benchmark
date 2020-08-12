@@ -1,6 +1,7 @@
 import time
 import shutil
 import json
+import pytest
 from pathlib import Path
 from pyhf_benchmark.jsonlfile import JsonlEventsFile
 
@@ -36,5 +37,11 @@ def test_jsonfile():
     file = JsonlEventsFile(time.time(), filename, directory)
     file.track("system", content)
     file.close()
+
+    with pytest.raises(IOError):
+        file = JsonlEventsFile(time.time(), "/+-+)*", directory)
+        file.track("system", content)
+        file.close()
+
     shutil.rmtree(directory)
     assert not directory.exists()
