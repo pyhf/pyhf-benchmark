@@ -1,5 +1,6 @@
 import time
 import shutil
+import json
 from pathlib import Path
 from pyhf_benchmark.jsonlfile import JsonlEventsFile
 
@@ -20,13 +21,20 @@ def test_jsonfile():
         "_timestamp": 1597101843,
         "_runtime": 4,
     }
-    file = JsonlEventsFile(time.time(), filename, directory)
-    file.track("system", content)
-    file.close()
 
     file = JsonlEventsFile(time.time(), filename, directory)
     file.track("system", content)
     file.close()
 
+    with (directory / filename).open("a+") as f:
+        f.write(json.dumps(content))
+
+    file = JsonlEventsFile(time.time(), filename, directory)
+    file.track("system", content)
+    file.close()
+
+    file = JsonlEventsFile(time.time(), filename, directory)
+    file.track("system", content)
+    file.close()
     shutil.rmtree(directory)
     assert not directory.exists()
