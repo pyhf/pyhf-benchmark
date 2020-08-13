@@ -1,7 +1,7 @@
 import click
 import pyhf
 import warnings
-from .load import downlaod, open_local_file, delete_downloaded_file
+from .load import download, open_local_file, delete_downloaded_file
 from .mle import get_bkg_and_signal, calculate_CLs
 from datetime import datetime
 from .manager import RunManager
@@ -70,7 +70,7 @@ def run(computation, backend, path, url, model_point, number, mode):
     if computation == "mle":
 
         if url:
-            directory_name = downlaod(url)
+            directory_name = download(url)
         elif path:
             directory_name = open_local_file(path)
         else:
@@ -135,13 +135,12 @@ def run(computation, backend, path, url, model_point, number, mode):
             meta = metas
             meta["backend"] = bk
             run_manager.start(meta)
-
-            number = int(number) if number.isdigit() else number
+            interpolation_type = int(number) if number.isdigit() else number
             pyhf.set_backend(bk)
             interpolator = (
-                pyhf.interpolators.get(number, False)
+                pyhf.interpolators.get(interpolation_type, False)
                 if mode == "slow"
-                else pyhf.interpolators.get(number)
+                else pyhf.interpolators.get(interpolation_type)
             )
             interpolation = interpolator(h)
             _ = interpolation(a)

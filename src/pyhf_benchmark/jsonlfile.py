@@ -14,23 +14,23 @@ class JsonlEventsFile(object):
         self.lock = Lock()
         if not out_dir.exists():
             out_dir.mkdir(parents=True, exist_ok=True)
-        self._file = self.fname.open("a+")
+        try:
+            self._file = self.fname.open("a+")
+        except IOError:
+            raise IOError(f"{self.fname} is an invalid file!")
         self.load()
 
     def load(self):
-        try:
-            last_row = {}
-            with self.fname.open("a+") as f:
-                for line in f:
-                    try:
-                        last_row = json.loads(line)
-                    except ValueError:
-                        print("warning: malformed history line: %s..." % line[:40])
-            # fudge the start_time to compensate for previous run length
-            if "_runtime" in last_row:
-                self._start_time -= last_row["_runtime"]
-        except IOError:
-            pass
+        last_row = {}
+        with self.fname.open("r+") as f:
+            for line in f:
+                try:
+                    last_row = json.loads(line)
+                except ValueError:
+                    print(f"warning: malformed history line: {line}")
+        # fudge the start_time to compensate for previous run length
+        if "_runtime" in last_row:
+            self._start_time -= last_row["_runtime"]
 
     def flatten(self, dictionary):
         if isinstance(dictionary, dict):
