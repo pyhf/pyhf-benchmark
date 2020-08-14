@@ -11,6 +11,15 @@ EVENTS_FNAME = Path("events.jsonl")
 
 
 def gpu_in_use_by_this_process(gpu_handle):
+    """
+    Check if there is a GPU used by a process.
+
+    Args:
+        gpu_handle: NVML Device handle
+
+    Returns:
+        True or False
+    """
     if not psutil:
         return False
 
@@ -40,7 +49,14 @@ def gpu_in_use_by_this_process(gpu_handle):
 
 
 class SystemStats(object):
+    """CPU and GPU work status for each time stamp."""
+
     def __init__(self, meta=None, directory="."):
+        """
+        Args:
+            meta: Meta data for a run.
+            directory: Output file Directory.
+        """
         try:
             pynvml.nvmlInit()
             self.gpu_count = pynvml.nvmlDeviceGetCount()
@@ -75,6 +91,9 @@ class SystemStats(object):
         )
 
     def start(self):
+        """
+        Start a thread to record CPU and GPU work status.
+        """
         self._thread.start()
 
     @property
@@ -87,15 +106,22 @@ class SystemStats(object):
 
     @property
     def sample_rate_seconds(self):
-        """Sample system stats every this many seconds, default to 2"""
+        """
+        Sample system stats every this many seconds, default to 2
+        """
         return self._sample_rate_seconds
 
     @property
     def samples_to_average(self):
-        """The number of samples to average before pushing, default to 3"""
+        """
+        The number of samples to average before pushing, default to 3
+        """
         return self._samples_to_average
 
     def _thread_body(self):
+        """
+        Control the logic of record and flush CPU and GPU work status.
+        """
         while True:
             stats = self.stats()
             for stat, value in stats.items():
@@ -117,6 +143,9 @@ class SystemStats(object):
                     break
 
     def shutdown(self):
+        """
+        End the thread.
+        """
         self._shutdown = True
         try:
             self._thread.join()
@@ -125,6 +154,9 @@ class SystemStats(object):
             pass
 
     def flush(self):
+        """
+        Flush CPU and GPU work status back to output file for after a time interval.
+        """
         stats = self.stats()
         for stat, value in stats.items():
             if isinstance(value, Number):
@@ -135,6 +167,12 @@ class SystemStats(object):
         self.sampler = {}
 
     def stats(self):
+        """
+        Record CPU and GPU work status after a time interval.
+
+        Returns:
+            stats: CPU and GPU work status
+        """
         stats = {}
         for i in range(0, self.gpu_count):
             handle = pynvml.nvmlDeviceGetHandleByIndex(i)

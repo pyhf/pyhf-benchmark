@@ -5,9 +5,15 @@ from threading import Lock
 
 
 class JsonlEventsFile(object):
-    """Used to store events during a run. """
+    """Used to store information of CPU and GPU work status during a run."""
 
     def __init__(self, start_time, fname, out_dir="."):
+        """
+        Args:
+            start_time: Start time of a run
+            fname: output JSON filename
+            out_dir: output directory
+        """
         self._start_time = start_time
         self.fname = out_dir / fname
         self.buffer = []
@@ -21,6 +27,9 @@ class JsonlEventsFile(object):
         self.load()
 
     def load(self):
+        """
+        Load output JSON file and set file pointer to the end of the file.
+        """
         last_row = {}
         with self.fname.open("r+") as f:
             for line in f:
@@ -33,6 +42,12 @@ class JsonlEventsFile(object):
             self._start_time -= last_row["_runtime"]
 
     def flatten(self, dictionary):
+        """
+        Flatten nested dictionary.
+
+        Args:
+            dictionary: CPU and GPU work status contents
+        """
         if isinstance(dictionary, dict):
             for k, v in list(dictionary.items()):
                 if isinstance(v, dict):
@@ -42,7 +57,14 @@ class JsonlEventsFile(object):
                         dictionary[k + "." + k2] = v2
 
     def track(self, event, properties, timestamp=None):
+        """
+        Flush work status back to output file.
 
+        Args:
+            event: Event name
+            properties: CPU and GPU work status contents
+            timestamp: Time stamp
+        """
         self.lock.acquire()
         try:
             row = {}
@@ -58,6 +80,9 @@ class JsonlEventsFile(object):
         os.fsync(self._file.fileno())
 
     def close(self):
+        """
+        Close output file and release the lock.
+        """
         self.lock.acquire()
         try:
             if self._file:

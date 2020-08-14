@@ -5,6 +5,14 @@ logger = logging.getLogger(__name__)
 
 
 def random_histosets_alphasets_pair():
+    """
+    Generate random dataset for interpolation computation.
+
+    Returns:
+        h: Histogram data
+        a: Alpha data
+    """
+
     def generate_shapes(histogramssets, alphasets):
         h_shape = [len(histogramssets), 0, 0, 0]
         a_shape = (len(alphasets), max(map(len, alphasets)))
