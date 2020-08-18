@@ -60,7 +60,7 @@ def run(computation, backend, path, url, model_point, number, mode):
     """
 
     if backend.find("[") != -1:
-        backends = backend[1:-1].split(",")
+        backends = backend[1:-1].replace(" ", "").split(",")
     else:
         backends = [backend]
     metas = {}
