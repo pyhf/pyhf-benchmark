@@ -129,12 +129,22 @@ def run(computation, backend, path, url, model_point, number, mode):
 
         h, a = random_histosets_alphasets_pair()
         metas["data"] = "Random"
+
+        print(f"Dataset: {metas['data']}")
+
         run_manager = RunManager(metas)
 
         for bk in backends:
             meta = metas
             meta["backend"] = bk
+            print(f"Backend set to: {bk}")
+
             run_manager.start(meta)
+
+            print("\nStarting fit\n")
+
+            fit_start_time = datetime.now()
+
             interpolation_type = int(number) if number.isdigit() else number
             pyhf.set_backend(bk)
             interpolator = (
@@ -144,6 +154,11 @@ def run(computation, backend, path, url, model_point, number, mode):
             )
             interpolation = interpolator(h)
             _ = interpolation(a)
+            fit_end_time = datetime.now()
+            fit_time = fit_end_time - fit_start_time
+
+            print(f"fit {metas['data']} in {fit_time} seconds\n")
+
             run_manager.close()
 
         run_manager.shutdown()
