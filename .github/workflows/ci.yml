@@ -44,7 +44,7 @@ jobs:
         file: ./coverage.xml
         flags: unittests
 
- docs:
+  docs:
 
     runs-on: ubuntu-latest
     strategy:
