@@ -48,6 +48,15 @@ filenames = [
 
 
 def load(directory_name):
+    """
+    Load output JSON file.
+
+    Args:
+        directory_name: Local path for output JSON file
+
+    Returns:
+        CPU and GPU work status in Pandas DataFrame format
+    """
     path = directory_name / "events.jsonl"
     output_dic = {}
 
@@ -69,6 +78,16 @@ def load(directory_name):
 
 
 def load_all(directory_name):
+    """
+    Load output JSON file if one run contains multiple running results.
+
+    Args:
+        directory_name: Local path for output JSON file
+
+    Returns:
+        contents: Storage for work status
+        backends: Storage for backends information
+    """
     list_of_paths = directory_name.glob("*")
     contents = []
     backends = []
@@ -80,6 +99,16 @@ def load_all(directory_name):
 
 
 def subplot(y_label, column, output, directory, filename):
+    """
+    Plot each metrics for the running results.
+
+    Args:
+        y_label: Y axis Name
+        column: Value for Y axis
+        output: CPU and GPU work status contents
+        directory: Directory for plot file
+        filename: Filename for plot file
+    """
     fig, ax = plt.subplots()
     x_value = output["_runtime"]
     if y_label == "Network Traffic (bytes)":
@@ -98,6 +127,17 @@ def subplot(y_label, column, output, directory, filename):
 
 
 def subplot_comb(y_label, column, outputs, backends, directory, filename):
+    """
+    Plot each metrics for the running results if multiple lines are plotted in one graph.
+
+    Args:
+        y_label: Y axis Name
+        column: Value for Y axis
+        outputs: CPU and GPU work status contents
+        backends: Backends information
+        directory: Directory for plot file
+        filename: Filename for plot file
+    """
     fig, ax = plt.subplots()
     ax.set_xlabel("Time (minutes)")
     ax.set_ylabel(y_label)
@@ -117,6 +157,12 @@ def subplot_comb(y_label, column, outputs, backends, directory, filename):
 
 
 def plot(directory):
+    """
+    Plot CPU and GPU metrics for a run.
+
+    Args:
+        directory: Directory for plot file
+    """
     output = load(directory)
     idx = 0
     while idx < len(ylabels):
@@ -127,6 +173,12 @@ def plot(directory):
 
 
 def plot_comb(directory):
+    """
+    Plot CPU and GPU metrics for a run if multiple lines are plotted in one graph.
+
+    Args:
+        directory: Directory for plot file
+    """
     outputs, backends = load_all(directory)
     idx = 0
     while idx < len(ylabels):

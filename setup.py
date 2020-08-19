@@ -20,6 +20,7 @@ extras_require["develop"] = sorted(
         + ["check-manifest", "bumpversion~=0.5", "pre-commit", "twine",]
     )
 )
+extras_require["docs"] = sorted(set(["sphinx"]))
 extras_require["complete"] = sorted(set(sum(extras_require.values(), [])))
 
 setuptools.setup(extras_require=extras_require,)

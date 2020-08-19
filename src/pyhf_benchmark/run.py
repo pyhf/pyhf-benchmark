@@ -37,14 +37,14 @@ warnings.filterwarnings("ignore")
 @click.option("-n", "--number", "number", help="Number.", default="0", required=False)
 @click.option("-mm", "--mode", "mode", help="Mode.", default="fast", required=False)
 def run(computation, backend, path, url, model_point, number, mode):
-    """
+    r"""
     Automatic process of taking pyhf computation.
 
     Usage:
 
     $ pyhf-benchmark run -c [-b] [-p] [-u] [-m] [-n] [-mm]
 
-  Examples:
+    Examples:
 
     $ pyhf-benchmark run -c mle -b numpy -u https://www.hepdata.net/record/resource/1267798?view=true -m [750,100]
     $ pyhf-benchmark run -c mle -u https://www.hepdata.net/record/resource/1267798?view=true -m [750,100]
@@ -53,7 +53,7 @@ def run(computation, backend, path, url, model_point, number, mode):
     $ pyhf-benchmark run -c interpolation -b numpy -n 0 -mm slow
 
 
-  More information:
+    More information:
 
     https://github.com/pyhf/pyhf-benchmark
 
