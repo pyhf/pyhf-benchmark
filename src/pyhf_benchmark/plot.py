@@ -137,9 +137,6 @@ def subplot_comb(y_label, column, outputs, backends, directory, filename):
         backends: Backends information
         directory: Directory for plot file
         filename: Filename for plot file
-
-    Returns:
-
     """
     fig, ax = plt.subplots()
     ax.set_xlabel("Time (minutes)")

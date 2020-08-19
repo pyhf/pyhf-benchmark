@@ -18,7 +18,7 @@
 
    <a class="github-fork-ribbon right-top fixed" href="https://github.com/pyhf/pyhf-benchmark/fork" data-ribbon="Fork me on GitHub" title="Fork me on GitHub">Fork me on GitHub</a>
 
-.. mdinclude:: ../../README.md
+.. include:: ../../README.rst
 
 
 

@@ -42,7 +42,6 @@ release = "0.0.1"
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
-    "m2r2",
     "sphinx.ext.autodoc",
     "sphinx.ext.autosummary",
     "sphinx.ext.coverage",
@@ -72,7 +71,7 @@ exclude_patterns = []
 xref_links = {"arXiv:1007.1727": ("[1007.1727]", "https://arxiv.org/abs/1007.1727")}
 
 # Github repo
-issues_github_path = "scikit-hep/pyhf/pyhf-benchmark"
+issues_github_path = "pyhf/pyhf-benchmark"
 
 # Generate the API documentation when building
 autosummary_generate = True

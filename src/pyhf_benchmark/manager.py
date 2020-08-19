@@ -26,9 +26,6 @@ class RunManager(object):
 
         Args:
             meta: Meta information for a run
-
-        Returns:
-
         """
         system = SystemStats(meta, self.directory)
         self.times += 1
